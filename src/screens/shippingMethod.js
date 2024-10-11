@@ -7,15 +7,8 @@ import ScreenIndicator from "../components/screenIndicator"
 
 const AddAddressScreen = ({ navigation, theme, reduxLang, route }) => {
 
-  const { total,datas,firstName,address,email,phone,pincode,city,statesName,country,lastName } = route.params;
-  console.log("total2", total);
-  console.log("datas2", datas);
-  console.log("firstName", firstName);
-  console.log("address", address);
-  console.log("email", email);
-  console.log("phone", phone);
-  console.log("pincode", pincode);
-  console.log("city", city);
+  const { total,datas,subTotal,percentage,firstName,address,email,phone,pincode,city,statesName,country,lastName } = route.params;
+  
   /////////////////// Header Settings
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -112,7 +105,7 @@ const AddAddressScreen = ({ navigation, theme, reduxLang, route }) => {
           // }}
           onPressFun={() =>
             navigation.push("OrderPage", {
-              total: total,datas:datas,firstName:firstName,address:address,email:email,phone:phone,pincode:pincode,city:city,statesName:statesName,country:country,lastName:lastName
+              total: total,datas:datas,subTotal:subTotal,percentage:percentage,firstName:firstName,address:address,email:email,phone:phone,pincode:pincode,city:city,statesName:statesName,country:country,lastName:lastName
             })
           }
           theme={theme}

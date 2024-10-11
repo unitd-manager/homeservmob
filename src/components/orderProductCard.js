@@ -2,6 +2,22 @@ import React from "react"
 import { StyleSheet, Text, View, Image } from "react-native"
 
 const CategoryThree = ({ name, url, theme,price,priceNet,qtyy }) => {
+  
+  const discount = priceNet ? parseFloat(priceNet) : 0;
+  // const price = parseFloat(price);
+  console.log('price',price)
+  // Calculate the discount amount from the percentage
+  const discountAmount = (price * discount) / 100;
+
+  // Price after applying the discount percentage
+  // const priceAfterDiscount = price - discountAmount;
+
+  // Calculate total for the product and add to the running total
+ 
+  const discountTotalAmount = (price - discountAmount);
+  console.log('discountTotalAmount',discountTotalAmount)
+  const percentagesym = priceNet ? "%" : '';
+
   return (
     <View
       key={1}
@@ -35,7 +51,7 @@ const CategoryThree = ({ name, url, theme,price,priceNet,qtyy }) => {
               }
             ]}
           >
-           Rs: {priceNet}
+           Rs: {discountTotalAmount}
           </Text>
 
           <Text
@@ -49,6 +65,18 @@ const CategoryThree = ({ name, url, theme,price,priceNet,qtyy }) => {
             ]}
           >
             {price}
+          </Text>
+          <Text
+            style={[
+              styles.productPriceText,
+              {
+                color: theme.textColor,
+                fontSize: theme.appFontSize.mediumSize,
+                fontFamily: theme.appFontSize.fontFamily
+              }
+            ]}
+          >
+           {priceNet}{percentagesym}
           </Text>
         </View>
         <Text

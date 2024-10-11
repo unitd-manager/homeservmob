@@ -23,7 +23,7 @@ import RazorpayCheckout from 'react-native-razorpay';
 const OrderPage = ({ navigation, theme, reduxLang, route }) => {
   /////////////////// Header Settings
 
-  const { total,datas,firstName,address,email,phone,pincode,city,statesName,country,lastName } = route.params;
+  const { total,datas,subTotal,percentage,firstName,address,email,phone,pincode,city,statesName,country,lastName } = route.params;
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -318,7 +318,7 @@ const OrderPage = ({ navigation, theme, reduxLang, route }) => {
       description: 'Purchase Description',
       image: 'https://your-company.com/your_image.png',
       currency: 'INR',
-      key: "rzp_test_Cmcb2IrTMsQEYc", // Replace with your Razorpay test/live key
+      key: "rzp_test_yE3jJN90A3ObCp", // Replace with your Razorpay test/live key
       amount: amountInPaise, // Amount in currency subunits (e.g., 1000 for INR 10)
       name: 'United',
       prefill: {
@@ -418,7 +418,7 @@ const OrderPage = ({ navigation, theme, reduxLang, route }) => {
             url={{ uri: `${imageBase}${item.images}` }}
             name={item.title}
             price={item.price}
-            priceNet={item.discount_amount}
+            priceNet={item.discount_percentage}
             qtyy={item.qty}
             theme={theme}
           ></OrderProductCard>
@@ -434,11 +434,11 @@ const OrderPage = ({ navigation, theme, reduxLang, route }) => {
             }
           ]}
         >
-          {textRow(reduxLang.SubTotal, "$6.00")}
-          {textRow(reduxLang.Shipping, "$0.00")}
-          {textRow(reduxLang.Tax, "$3.00")}
-          {textRow(reduxLang.Discount, "$12.00")}
-          {textRow(reduxLang.Total, total, true)}
+          {textRow(reduxLang.SubTotal, `Rs:${subTotal}`)}
+          {textRow(reduxLang.Shipping, "0.00")}
+          {textRow(reduxLang.Tax, "0.00")}
+          {textRow(reduxLang.Discount, percentage)}
+          {textRow(reduxLang.Total, `Rs:${total}`, true)}
         </View>
 
         {headingText(reduxLang.OrderNote)}

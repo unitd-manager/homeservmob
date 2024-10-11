@@ -30,7 +30,7 @@ const CategoryThree = ({
       ]}
     >
       <Image
-        source={{ uri: productDetailData.images?.[0] ? `https://unitdecom.unitdtechnologies.com/storage/uploads/${productDetailData.images[0]}` : null }}
+        source={{ uri: productDetailData.images?.[0] ? `https://homeservices.unitdtechnologies.com/storage/uploads/${productDetailData.images[0]}` : null }}
         resizeMode={"cover"}
         borderRadius={6}
         style={styles.imageBackground}
