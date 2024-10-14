@@ -231,11 +231,56 @@ const App = ({ navigation, theme, reduxLang,route }) => {
   };
   const calculateTotal = () => {
     return cardData.reduce((total, product) => {
-     
-      return total + (parseFloat(product.price) * parseFloat(product.qty));
+      const discount = product.discount_amount ? parseFloat(product.discount_amount) : 0;
+      const priceAfterDiscount = parseFloat(product.price) - discount;
+      
+      return total + (priceAfterDiscount * parseFloat(product.qty));
+    }, 0).toFixed(2);
+  };
+  const calculatepercentageTotals = () => {
+    return cardData.reduce((total, product) => {
+      const discount = product.discount_percentage ? parseFloat(product.discount_percentage) : 0;
+      const price = parseFloat(product.price);
+      
+      // Calculate the discount amount from the percentage
+      const discountAmount = (price * discount) / 100;
+  
+      // Price after applying the discount percentage
+      const priceAfterDiscount = price - discountAmount;
+  
+      // Calculate total for the product and add to the running total
+      return total + (priceAfterDiscount * parseFloat(product.qty));
     }, 0).toFixed(2);
   };
   
+  const calculatepercentageTotal = () => {
+    return cardData.reduce((total, product) => {
+      const discount = product.discount_percentage ? parseFloat(product.discount_percentage) : 0;
+      const price = parseFloat(product.price);
+      
+      // Calculate the discount amount from the percentage
+      const discountAmount = (price * discount) / 100;
+  
+      // Price after applying the discount percentage
+      // const priceAfterDiscount = price - discountAmount;
+  
+      // Calculate total for the product and add to the running total
+      return total + (discountAmount * parseFloat(product.qty));
+    }, 0).toFixed(2);
+  };
+  
+  const calculateSubTotal = () => {
+    return cardData.reduce((total, product) => {
+     
+      return total + (parseFloat(product.price) * parseFloat(product.qty));
+    }, 0).toFixed(2);
+  };  
+  const calculateDicountTotal = () => {
+    return cardData.reduce((total, product) => {
+     console.log('total discount',parseFloat(product.discount_amount))
+      return total + (parseFloat(product.discount_amount));
+    }, 0).toFixed(2);
+  };
 
   
 
@@ -255,13 +300,13 @@ const App = ({ navigation, theme, reduxLang,route }) => {
         {cardData && cardData.map((item, index) => {
   console.log('Item:', item.images); // This will log each item in the cardData array
   console.log('Item:', item.price);
-  console.log('Item:', item.discount_amount);
+  console.log('Itediscount:', item.discount_amount);
   return (
     <CartCard
       key={index}
       url={{ uri: `${imageBase}${item.images}` }}
       price={item.price}
-      priceNet={item.discount_amount}
+      priceNet={item.discount_percentage}
       quantity={item.qty}
       name={item.title}
       basketId={item.basket_id}
@@ -324,14 +369,14 @@ const App = ({ navigation, theme, reduxLang,route }) => {
             backgroundColor: theme.secondryBackgroundColor
           }}
         >
-          {textRow(reduxLang.SubTotal, "$6.00")}
-          {textRow(reduxLang.Shipping, "$0.00")}
+          {textRow(reduxLang.SubTotal, `Rs :${calculateSubTotal()}`, true)}
+          {/* {textRow(reduxLang.Shipping, "$0.00")} */}
+          
+          {/* {textRow(reduxLang.Tax,`Rs :${calculatepercentageTotal()}`, true)} */}
 
-          {textRow(reduxLang.Tax, "$3.00")}
-
-          {textRow(reduxLang.Discount, "$12.00")}
+          {textRow(reduxLang.Discount,  `Rs :${calculatepercentageTotal()}`, true)}
           <View style={{ marginVertical: 2 }} />
-          {textRow(reduxLang.Total,  `Rs :${calculateTotal()}`, true)}
+          {textRow(reduxLang.Total,  `Rs :${calculatepercentageTotals()}`, true)}
         </View>
 
         <View
@@ -344,7 +389,7 @@ const App = ({ navigation, theme, reduxLang,route }) => {
           { userContactId !== null && cardData.length !== 0 &&
           <CustomBtn
             onPressFun={() => {
-              navigation.navigate("ShippingAddress",{datas:cardData,total:calculateTotal()})
+              navigation.navigate("ShippingAddress",{datas:cardData,total:calculatepercentageTotals(),percentage:calculatepercentageTotal(),subTotal:calculateSubTotal()})
             }}
             theme={theme}
             bold={true}

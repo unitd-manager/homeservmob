@@ -13,7 +13,6 @@ const CategoryThree = ({
   productDetailData
 }) => {
   const navigation = useNavigation()
-
   return (
     <View
       key={index}

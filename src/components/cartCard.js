@@ -22,6 +22,25 @@ const cartCard = ({ key, name, url, theme, productDetailData,priceNet,price,quan
   useEffect(() => {
     getUser()
   }, []) 
+
+ 
+    
+      const discount = priceNet ? parseFloat(priceNet) : 0;
+      // const price = parseFloat(price);
+      console.log('price',price)
+      // Calculate the discount amount from the percentage
+      const discountAmount = (price * discount) / 100;
+  
+      // Price after applying the discount percentage
+      // const priceAfterDiscount = price - discountAmount;
+  
+      // Calculate total for the product and add to the running total
+    
+      const discountTotalAmount = (price - discountAmount);
+
+      const percentagesym = priceNet ? "%" : '';
+  console.log('discountprice',discountAmount)
+  console.log('discountTotalAmount',discountTotalAmount)
   // const [quantityPlus, SetqunatityPlus] = useState(quantity);
   // const [quantitys, setQuantity] = useState(quantity);
   // const handleIncrement = () => {
@@ -171,7 +190,7 @@ const cartCard = ({ key, name, url, theme, productDetailData,priceNet,price,quan
                 }
               ]}
             >
-              {priceNet}
+              {discountTotalAmount}
             </Text>
 
             <Text
@@ -185,6 +204,18 @@ const cartCard = ({ key, name, url, theme, productDetailData,priceNet,price,quan
               ]}
             >
               {price}
+            </Text>
+            <Text
+              style={[
+                styles.productPriceText,
+                {
+                  color:'green',
+                  fontSize: theme.appFontSize.mediumSize,
+                  fontFamily: theme.appFontSize.fontFamily
+                }
+              ]}
+            >
+              {priceNet}{percentagesym}
             </Text>
           </View>
           <Text
@@ -201,7 +232,7 @@ const cartCard = ({ key, name, url, theme, productDetailData,priceNet,price,quan
             {name}
           </Text>
 
-          <Text
+          {/* <Text
             style={[
               styles.productNameText,
               {
@@ -213,7 +244,7 @@ const cartCard = ({ key, name, url, theme, productDetailData,priceNet,price,quan
             numberOfLines={1}
           >
             {"small, blue"}
-          </Text>
+          </Text> */}
 
           <CounterSelection
             theme={theme}
