@@ -1,2 +1,2 @@
-const imageBase = `https://unitdecom.unitdtechnologies.com/storage/uploads/`
+const imageBase = `https://homeservices.unitdtechnologies.com/storage/uploads/`
 export default imageBase

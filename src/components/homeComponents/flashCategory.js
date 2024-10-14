@@ -79,7 +79,7 @@ const App = ({ theme, reduxLang, categories, productDetailData }) => {
               style={styles.categoryTouch}
             >
              <Image
-               source={{ uri: item.images?.[0] ? `https://unitdecom.unitdtechnologies.com/storage/uploads/${item.images[0]}` : null }}
+               source={{ uri: item.images?.[0] ? `${imageBase}${item.images[0]}` : null }}
                 resizeMode={"cover"}
               style={styles.imageBackground}
               />

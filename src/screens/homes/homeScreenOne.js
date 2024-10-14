@@ -1,4 +1,4 @@
-import React, { useRef, useState, useLayoutEffect } from "react"
+import React, { useRef, useState, useEffect,useLayoutEffect } from "react"
 import {
   SafeAreaView,
   StyleSheet,
@@ -161,6 +161,7 @@ const App = ({ theme, reduxLang,textSize }) => {
         res.data.data.forEach(el => {
           el.images = String(el.images).split(",")
         })
+        console.log('bestsellers',res.data.data)
         setBestSellingProducts(res.data.data)
       
       })
@@ -179,6 +180,7 @@ const App = ({ theme, reduxLang,textSize }) => {
         res.data.data.forEach(el => {
           el.images = String(el.images).split(",")
         })
+        console.log('newpro',res.data.data)
         setNewProducts(res.data.data)
       
       })
@@ -205,7 +207,7 @@ const App = ({ theme, reduxLang,textSize }) => {
       })
   }
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     // Fetch data from API
     api
       .get("/product/getAllProducts")
@@ -359,7 +361,7 @@ const App = ({ theme, reduxLang,textSize }) => {
           }
         >
           <Image
-             source={{ uri: item.images?.[0] ? `https://unitdecom.unitdtechnologies.com/storage/uploads/${item.images[0]}` : null }}
+             source={{ uri: item.images?.[0] ? `https://homeservices.unitdtechnologies.com/storage/uploads/${item.images[0]}` : null }}
             resizeMode={"cover"}
             borderRadius={8}
             style={[

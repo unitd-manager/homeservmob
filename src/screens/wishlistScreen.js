@@ -1,199 +1,133 @@
-import React, { useEffect, useRef, useState } from "react"
+import React, { useEffect, useRef, useState } from "react";
 import {
   SafeAreaView,
   StyleSheet,
   FlatList,
   TouchableOpacity,
   View,
-  Text
-} from "react-native"
-import { connect } from "react-redux"
-import AddtoCartPopUpModal from "../components/addtoCartPopUpModal"
-import FontAwesome from "react-native-vector-icons/FontAwesome"
-import Card from "../components/cardStyles/cardOne"
-import renderFooter from "../components/renderFooter"
-import SearchListCard from "../components/searchListCard"
+  Text,
+} from "react-native";
+import { connect } from "react-redux";
+import AddtoCartPopUpModal from "../components/addtoCartPopUpModal";
+import FontAwesome from "react-native-vector-icons/FontAwesome";
+import Card from "../components/cardStyles/cardOne";
+import renderFooter from "../components/renderFooter";
+import AsyncStorage from "@react-native-async-storage/async-storage"
+import SearchListCard from "../components/searchListCard";
+import api from "../constants/api";
 
 const App = ({ navigation, theme, reduxLang, route }) => {
-  let [temp, setTempdata] = useState(
-    route.params === undefined
-      ? [
-          {
-            url: require("../images/shirtsTwo/CustomSize43.png"),
-            productName: reduxLang.JBL,
-            quantity: "120 " + reduxLang.Products
-          },
-          {
-            url: require("../images/shirtsTwo/CustomSize43.png"),
-            productName: reduxLang.Sony,
-            quantity: "650 " + reduxLang.Products
-          },
-          {
-            url: require("../images/shirtsTwo/CustomSize43.png"),
-            productName: reduxLang.Sony,
-            quantity: "432 " + reduxLang.Products
-          },
-          {
-            url: require("../images/shirtsTwo/CustomSize43.png"),
-            productName: reduxLang.Bose,
-            quantity: "678 " + reduxLang.Products
-          },
-          {
-            url: require("../images/shirtsTwo/CustomSize43.png"),
-            productName: reduxLang.BeatsbyDre,
-            quantity: "789 " + reduxLang.Products
-          },
-          {
-            url: require("../images/shirtsTwo/CustomSize43.png"),
-            productName: reduxLang.Skullcandy,
-            quantity: "120 " + reduxLang.Products
-          },
-          {
-            url: require("../images/shirtsTwo/CustomSize43.png"),
-            productName: reduxLang.Beyerdynamic,
-            quantity: "650 " + reduxLang.Products
-          },
-          {
-            url: require("../images/shirtsTwo/CustomSize43.png"),
-            productName: reduxLang.AKGAcoustics,
-            quantity: "432 " + reduxLang.Products
-          },
-          {
-            url: require("../images/shirtsTwo/CustomSize43.png"),
-            productName: reduxLang.Skullcandy,
-            quantity: "678 " + reduxLang.Products
-          },
-          {
-            url: require("../images/shirtsTwo/CustomSize43.png"),
-            productName: reduxLang.Beyerdynamic,
-            quantity: "789 " + reduxLang.Products
-          }
-        ]
-      : route.params.dataImages
-  )
+  const [data, setData] = useState([]);
+  const [loader, setLoader] = useState(true);
+  const [fab, setFab] = useState(false);
+  const [addtoCartmodalVisible, setaddtoCartModalVisible] = useState(false);
+  const [gridView, setGridView] = useState(true);
+  const scrollRef = useRef(null);
+  let onEnDReachedCalledDuringMomentum;
 
+  // Fetch data from API
   useEffect(() => {
+    const fetchData = async () => {
+      const userData = await AsyncStorage.getItem('USER');
+      const user = JSON.parse(userData);
+      
+      if (user && user.contact_id) {
+        api
+        .post("/contact/getFavByContactId",{contact_id:user.contact_id})
+        .then(res => {
+          res.data.data.forEach(element => {
+            element.tag = String(element.tag).split(",")
+          })
+          res.data.data.forEach(el => {
+            el.images = String(el.images).split(",")
+          })
+          console.log('wishlists',res.data.data)
+          setData(res.data.data)
+        
+        })
+        .catch(err => {
+          console.log(err)
+        })
+      }
+      
+    };
+
+    fetchData();
     navigation.setOptions({
       headerTitle: reduxLang.Wishlist,
       headerStyle: {
-        backgroundColor: theme.secondryBackgroundColor
+        backgroundColor: theme.secondryBackgroundColor,
       },
+      headerTintColor: theme.textColor,
       headerRight: () => (
-        <TouchableOpacity
-          onPress={() => {
-            setGridView(pre => !pre)
-          }}
-        >
-          <View>
-            <FontAwesome
-              style={{
-                color: theme.secondry,
-                fontSize: theme.appFontSize.largeSize + 4,
-                marginHorizontal: 18
-              }}
-              name={"th-large"}
-            />
-          </View>
+        <TouchableOpacity onPress={() => setGridView((prev) => !prev)}>
+          <FontAwesome
+            style={{
+              color: theme.secondry,
+              fontSize: theme.appFontSize.largeSize + 4,
+              marginHorizontal: 18,
+            }}
+            name={"th-large"}
+          />
         </TouchableOpacity>
       ),
-      headerTintColor: theme.textColor
+    });
+  }, [navigation, reduxLang, theme]);
+
+  const handleDelete = async (id) => {
+    api
+    .post("/contact/deleteWishlistItem",{wish_list_id:id})
+    .then(res => {      
+      console.log('wishlists',res.data.data)
     })
-  }, [
-    navigation,
-    reduxLang.Category,
-    theme.secondryBackgroundColor,
-    theme.textColor
-  ])
-
-  const [gridView, setGridView] = useState(true)
-  let [data, setdata] = useState(temp)
-
-  const [loader, setLoader] = useState(true)
-  const [fab, setFab] = useState(false)
-  let scrollRef = useRef(null)
-  let onEnDReachedCalledDuringMomentum
-
-  const [addtoCartmodalVisible, setaddtoCartModalVisible] = useState(false)
-
-  const handleScroll = event => {
-    if (
-      fab &&
-      event.nativeEvent.contentOffset.y >= 0 &&
-      event.nativeEvent.contentOffset.y < 300
-    ) {
-      setFab(false)
-    }
-  }
-
-  const onEndReached = () => {
-    // handleLoadMore()
-    onEnDReachedCalledDuringMomentum = true
-  }
-
-  // const handleLoadMore = () => {
-  //   if (data.length > 9) {
-  //     setFab(true)
-  //   }
-  //   if (data.length < 20) {
-  //     setLoader(true)
-  //     const delay = setInterval(function() {
-  //       setLoader(false)
-  //       let temp = data.concat(data)
-  //       setdata(temp)
-  //       clearInterval(delay)
-  //     }, 3000)
-  //   }
-  // }
+    .catch(err => {
+      console.log(err)
+    })
+  };
 
   const deleteLabel = () => (
     <View style={styles.deleteTextView}>
       <Text
         style={{
           color: theme.textColor,
-          fontSize: theme.appFontSize.mediumSize
+          fontSize: theme.appFontSize.mediumSize,
         }}
       >
         {reduxLang.RemoveAll}
       </Text>
-
       <TouchableOpacity>
         <FontAwesome
           style={{
             color: theme.secondry,
             fontSize: theme.appFontSize.largeSize,
-            borderColor: theme.primaryBackgroundColor
+            borderColor: theme.primaryBackgroundColor,
           }}
           name={"trash"}
         />
       </TouchableOpacity>
     </View>
-  )
+  );
 
   return (
     <SafeAreaView
       style={[
         styles.container,
-        { backgroundColor: theme.primaryBackgroundColor }
+        { backgroundColor: theme.primaryBackgroundColor },
       ]}
     >
       {deleteLabel()}
 
-      {/* //fab Button */}
-
-      {fab ? (
+      {fab && (
         <TouchableOpacity
           style={[
             styles.fabStyle,
             {
-              backgroundColor: theme.primary
-            }
+              backgroundColor: theme.primary,
+            },
           ]}
           onPress={() => {
-            scrollRef?.current?.scrollToOffset({
-              animated: true,
-              offset: 0
-            })
-            setFab(false)
+            scrollRef?.current?.scrollToOffset({ animated: true, offset: 0 });
+            setFab(false);
           }}
         >
           <FontAwesome
@@ -202,17 +136,15 @@ const App = ({ navigation, theme, reduxLang, route }) => {
               styles.fabIcon,
               {
                 color: theme.secondryBackgroundColor,
-                fontSize: theme.appFontSize.largeSize
-              }
+                fontSize: theme.appFontSize.largeSize,
+              },
             ]}
           />
         </TouchableOpacity>
-      ) : null}
-
-      {/* // Modal  start */}
+      )}
 
       <AddtoCartPopUpModal
-        productDetailData={temp}
+        productDetailData={data}
         theme={theme}
         reduxLang={reduxLang}
         addtoCartmodalVisible={addtoCartmodalVisible}
@@ -228,64 +160,61 @@ const App = ({ navigation, theme, reduxLang, route }) => {
         legacyImplementation={true}
         maxToRenderPerBatch={10}
         updateCellsBatchingPeriod={10}
-        keyExtractor={(item, index) => index.toString()}
+        keyExtractor={(item) => item?.id?.toString()} // Adjust according to your data structure
         data={data}
-        renderItem={item =>
+        renderItem={({ item }) =>
           !gridView ? (
             <SearchListCard
               icon={"trash"}
-              data={item.item}
-              productDetailData={temp}
+              data={item}
+              handleDelete={handleDelete} // Pass delete function to child component if needed
               reduxLang={reduxLang}
-              index={item.index}
               theme={theme}
             />
           ) : (
             <Card
-              data={item.item}
-              productDetailData={temp}
+              data={item}
               whishlistTrash={true}
               reduxLang={reduxLang}
-              index={item.index}
               theme={theme}
-              addToCartFun={() =>
-                setaddtoCartModalVisible(!addtoCartmodalVisible)
-              }
+              addToCartFun={() => setaddtoCartModalVisible(!addtoCartmodalVisible)}
+              onDelete={() => handleDelete(item.wish_list_id)} // Call delete function
             />
           )
         }
         ref={scrollRef}
         ListFooterComponent={renderFooter(theme, loader)}
-        onScroll={handleScroll}
-        onEndReached={onEndReached}
+        onScroll={(event) => {
+          if (fab && event.nativeEvent.contentOffset.y >= 0 && event.nativeEvent.contentOffset.y < 300) {
+            setFab(false);
+          }
+        }}
+        onEndReached={() => {
+          // Implement pagination or load more data if needed
+          onEnDReachedCalledDuringMomentum = true;
+        }}
         onEndReachedThreshold={0.3}
         onMomentumScrollBegin={() => {
-          onEnDReachedCalledDuringMomentum = false
+          onEnDReachedCalledDuringMomentum = false;
         }}
       />
     </SafeAreaView>
-  )
-}
+  );
+};
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1
-  },
-  headingText: {
-    fontWeight: "bold",
-    alignSelf: "flex-start",
-    paddingHorizontal: 23,
-    paddingVertical: 15
+    flex: 1,
   },
   deleteTextView: {
     flexDirection: "row",
     justifyContent: "space-between",
     padding: 15,
     alignItems: "center",
-    paddingBottom: 10
+    paddingBottom: 10,
   },
   fabIcon: {
-    paddingBottom: 2
+    paddingBottom: 2,
   },
   fabStyle: {
     zIndex: 5,
@@ -301,24 +230,24 @@ const styles = StyleSheet.create({
     shadowColor: "#000",
     shadowOffset: {
       width: 0,
-      height: 2
+      height: 2,
     },
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
-    elevation: 5
+    elevation: 5,
   },
   colWrapper: {
     justifyContent: "space-between",
     margin: 5,
     marginTop: 10,
     marginBottom: 0,
-    backgroundColor: "transparent"
-  }
-})
+    backgroundColor: "transparent",
+  },
+});
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state) => ({
   theme: state.configReducer.theme,
-  reduxLang: state.configReducer.lang
-})
+  reduxLang: state.configReducer.lang,
+});
 
-export default connect(mapStateToProps, null)(App)
+export default connect(mapStateToProps, null)(App);
