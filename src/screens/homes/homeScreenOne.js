@@ -8,12 +8,15 @@ import {
   backgroundColor,
   View,
   Image,
+  Alert,
   StatusBar
 } from "react-native"
 import { connect } from "react-redux"
 import { HEIGHT } from "../../components/config"
+import { HEADER_IOS_HEIGHT, HEADER_ANDROID_HEIGHT, } from "../../components/config"
 import ReviewStar from "../../components/reviewStar"
 import AddtoCartPopUpModal from "../../components/addtoCartPopUpModal"
+import AsyncStorage from "@react-native-async-storage/async-storage"
 import FontAwesome from "react-native-vector-icons/FontAwesome"
 import BannerOne from "../../components/banners/bannerOne"
 import HeaderOne from "../../components/homeHeaders/headerOne"
@@ -27,9 +30,81 @@ import ThemeChangeIcon from "../../components/themeChangeIcon"
 import { useNavigation } from "@react-navigation/native"
 import api from "../../constants/api"
 
-const App = ({ theme, reduxLang,textSize }) => {
+const App = ({ theme, reduxLang,textSize,icon }) => {
 
   const navigation = useNavigation()
+  const [user, setUserData] = useState();
+  const [sliderData, setSliderData] = useState([])
+  const [title, setTitle] = useState([])
+  const [data, setData] = useState([])
+  const [dataWish, setDataWish] = useState([])
+  console.log('dataWish',dataWish)
+  const getUser = async () => {
+    let userData = await AsyncStorage.getItem('USER');
+    userData = JSON.parse(userData);
+    setUserData(userData);
+  };
+
+  const contactId = user ? user.contact_id : null;
+
+
+  useEffect(() => {
+    getUser();
+  }, [contactId]);
+
+  useEffect(() =>{
+    if (user && user.contact_id) {
+      api
+      .post("/contact/getFavByContactId",{contact_id:user.contact_id})
+      .then(res => {
+        res.data.data.forEach(element => {
+          element.tag = String(element.tag).split(",")
+        })
+        res.data.data.forEach(el => {
+          el.images = String(el.images).split(",")
+        })
+        console.log('wishlists',res.data.data)
+        setDataWish(res.data.data)
+      
+      })
+      .catch(err => {
+        console.log(err)
+      })
+    }
+  },[])
+
+  const Insert = (item) => {
+    // if (contactId) {
+    //     Alert.alert('Please fill in all fields');
+    //     return;
+    // }
+    
+    
+    const wishData = {
+        contact_id: user.contact_id,
+        product_id:item, 
+    };
+    
+    api
+        .post('/contact/insertToWishlist', wishData)
+        .then(response => {
+            if (response.status === 200) {
+
+             Alert.alert('Product Add to Wishlist');
+
+            } else {
+                console.error('Error');
+            }
+        })
+        .catch(error => {
+          
+            console.error('Error:', error);
+        }
+
+        );
+
+};
+
   const categories = [
     {
       name: reduxLang.Armchair,
@@ -73,17 +148,7 @@ const App = ({ theme, reduxLang,textSize }) => {
     }
   ]
 
-  const [sliderData, setSliderData] = useState([])
-  const [title, setTitle] = useState([])
-  const [data, setData] = useState([
-
-    // {
-    //     url: require('../../images/furniture/CustomSize19.png'),
-    //     productName:title,
-    //     // quantity: '650 Products'
-    //    },
-    
-  ])
+ 
    // let [data, setdata] = useState([{
   //   url: require('../../images/furniture/CustomSize19.png'),
   //   productName: 'Armchair',
@@ -340,6 +405,21 @@ const App = ({ theme, reduxLang,textSize }) => {
         data={data}
         columnWrapperStyle={styles.colWrapper}
         renderItem={({ item, index }) => {
+          const discount = item.discount_percentage ? parseFloat(item.discount_percentage) : 0;
+          // const price = parseFloat(price);
+          console.log('price',item.price)
+          // Calculate the discount amount from the percentage
+          const discountAmount = (item.price * discount) / 100;
+      
+          // Price after applying the discount percentage
+          // const priceAfterDiscount = price - discountAmount;
+      
+          // Calculate total for the product and add to the running total
+        
+          const discountTotalAmount = (item.price - discountAmount);
+    
+          const percentagesym = item.discount_percentage ? "%" : '';
+     
           return (
             <View style={styles.container1}>
       <View
@@ -412,6 +492,13 @@ const App = ({ theme, reduxLang,textSize }) => {
               <View />
             )} */}
           </View>
+          <View
+            style={{
+              flexDirection: "row",
+              justifyContent: "space-between",
+              width: "65%"
+            }}
+          >
           <Text
             numberOfLines={1}
             style={[
@@ -422,8 +509,36 @@ const App = ({ theme, reduxLang,textSize }) => {
               }
             ]}
           >
-            Rs :{item.price}
+            Rs :{discountTotalAmount}
           </Text>
+          { item.discount_percentage !==null &&
+          <Text
+            numberOfLines={1}
+            style={[
+              styles.discountPriceText,
+              {
+                color:'red',
+                fontSize: theme.appFontSize.smallSize,
+                fontFamily: theme.appFontSize.fontFamily
+              }
+            ]}
+          >
+            {item.price}
+          </Text>
+        }
+          <Text
+              style={[
+                styles.productPriceText,
+                {
+                  color:'green',
+                  fontSize: theme.appFontSize.smallSize,
+                  fontFamily: theme.appFontSize.fontFamily
+                }
+              ]}
+            >
+              {item.discount_percentage}{percentagesym}
+            </Text>
+          </View>
 
           <View style={styles.cartIconContainer}>
             <ReviewStar
@@ -442,8 +557,23 @@ const App = ({ theme, reduxLang,textSize }) => {
               />
             </TouchableOpacity> */}
           </View>
+          <TouchableOpacity style={styles.heartIcon}  onPress={() => {
+              Insert(item.product_id);
+            }} >
+        <FontAwesome
+          style={{
+            color: theme.secondry,
+            fontSize: icon
+              ? theme.appFontSize.largeSize
+              : theme.appFontSize.mediumSize
+          }}
+          name={icon ? icon : "heart"}
+        />
+      </TouchableOpacity>
         </View>
+        
       </View>
+     
     </View>
          )
         }}
@@ -485,6 +615,8 @@ const App = ({ theme, reduxLang,textSize }) => {
               categories={mostPopularProducts}
               theme={theme}
               reduxLang={reduxLang}
+              icon={icon}
+              offer={"Most Popular"}
             />
              <View style={styles.flashRow}>
              <Text
@@ -504,6 +636,8 @@ const App = ({ theme, reduxLang,textSize }) => {
               categories={newProducts}
               theme={theme}
               reduxLang={reduxLang}
+              icon={icon}
+              offer={"New Product"}
             />
  <View style={styles.flashRow}>
              <Text
@@ -523,6 +657,8 @@ const App = ({ theme, reduxLang,textSize }) => {
               categories={bestSellingProducts}
               theme={theme}
               reduxLang={reduxLang}
+              icon={icon}
+              offer={"Best Selling"}
             />
 
             {/* <DailyFeatured
@@ -630,6 +766,15 @@ const styles = StyleSheet.create({
     marginTop: 0,
     marginBottom: 0
   },
+  discountPriceText: {
+    textDecorationLine: "line-through",
+    textAlign: "left",
+    paddingHorizontal: 10,
+    paddingBottom:
+      Platform.OS === "ios"
+        ? HEADER_IOS_HEIGHT * 0.05
+        : HEADER_ANDROID_HEIGHT * 0.04
+  },
   flashRow: {
     flexDirection: "row",
     width: "100%",
@@ -637,6 +782,12 @@ const styles = StyleSheet.create({
     padding: 10,
     alignItems: "center",
     paddingBottom: 5
+  },
+  heartIcon: {
+    // paddingHorizontal: 8,
+    position: "absolute",
+    right: 12,
+    top:41
   },
 })
 

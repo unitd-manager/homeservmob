@@ -128,9 +128,7 @@ const Counter = ({
     { name: reduxLang.Size, isSelected: false },
     { name: reduxLang.Weight, isSelected: false }
   ])
-console.log('product price',productDetailData.price)
-console.log('product Name',productDetailData.title)
-console.log('product id',productDetailData.product_id)
+
   const [colorsAttr, setColorsAttr] = useState([
     { name: "red", isSelected: true },
     { name: "green", isSelected: false },
@@ -167,9 +165,7 @@ console.log('product id',productDetailData.product_id)
     getUser();
   }, [contactId]);
 
-  console.log('contactId', contactId);
   
-  console.log('quantityPlus', quantityPlus);
   const [cart, setCart] = useState([]);
   console.log('cart', cart);
   

@@ -12,6 +12,11 @@ const CategoryThree = ({
 }) => {
   const navigation = useNavigation()
 
+  const discount = productDetailData.discount_percentage ? parseFloat(productDetailData.discount_percentage) : 0;
+  const discountAmount = (productDetailData.price * discount) / 100;
+
+  const discountTotalAmount = (productDetailData.price - discountAmount);
+
   return (
     <TouchableOpacity
       key={index}
@@ -48,7 +53,7 @@ const CategoryThree = ({
               paddingRight: 10
             }}
           >
-            {productDetailData.price}
+            {discountTotalAmount}
           </Text>
 
           <Text
@@ -77,6 +82,7 @@ const CategoryThree = ({
             >
               {productDetailData.title}
             </Text>
+            { productDetailData.discount_percentage !== null &&
         <Text
           style={{
             color: theme.primary,
@@ -88,8 +94,9 @@ const CategoryThree = ({
             borderColor: theme.primary
           }}
         >
-          {"20% " + reduxLang.Off}
+          {productDetailData.discount_percentage}{"" + reduxLang.Off}
         </Text>
+}
 
         <Text
           style={[

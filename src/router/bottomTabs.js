@@ -28,6 +28,7 @@ import TermsAndCondScreen from "../screens/termsAndCondScreen"
 import ProfileScreen from "../screens/updateProfileScreen"
 import LogoutScreen from "../screens/LogoutScreen"
 import cartScreen from "../screens/cartScreen"
+import OfferList from "../components/homeComponents/OfferList"
 import { createStackNavigator } from "@react-navigation/stack"
 
 const Stack = createStackNavigator()
@@ -79,6 +80,7 @@ function MyTabsStack() {
       />
       <Stack.Screen name="AddAddress" component={addAddressScreen} />
       <Stack.Screen name="Address" component={AddressScreen} />
+      <Stack.Screen name="OfferList" component={OfferList} />
       <Stack.Screen
         name="IntroSliderScreen"
         options={() => {

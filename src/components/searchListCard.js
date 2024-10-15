@@ -1,8 +1,10 @@
-import React from "react"
-import { StyleSheet, Text, View, TouchableOpacity, Image } from "react-native"
+import React , { useRef, useState, useEffect,useLayoutEffect }from "react"
+import { StyleSheet,Alert, Text, View, TouchableOpacity, Image } from "react-native"
 import FontAwesome from "react-native-vector-icons/FontAwesome"
+import AsyncStorage from "@react-native-async-storage/async-storage"
 import { useNavigation } from "@react-navigation/native"
 import imageBase from "../constants/imageBase"
+import api from "../constants/api"
 
 const CategoryThree = ({
   data,
@@ -13,6 +15,53 @@ const CategoryThree = ({
   productDetailData
 }) => {
   const navigation = useNavigation()
+  const [user, setUserData] = useState();
+
+  const getUser = async () => {
+    let userData = await AsyncStorage.getItem('USER');
+    userData = JSON.parse(userData);
+    setUserData(userData);
+  };
+
+  const contactId = user ? user.contact_id : null;
+
+
+  useEffect(() => {
+    getUser();
+  }, [contactId]);
+
+  const Insert = () => {
+    // if (contactId) {
+    //     Alert.alert('Please fill in all fields');
+    //     return;
+    // }
+    
+    
+    const wishData = {
+        contact_id: user.contact_id,
+        product_id:data.product_id, 
+    };
+    console.log('wishData',wishData)
+    console.log('datafromProduct',data.product_id)
+    api
+        .post('/contact/insertToWishlist', wishData)
+        .then(response => {
+            if (response.status === 200) {
+
+             Alert.alert('Product Add to Wishlist');
+
+            } else {
+                console.error('Error');
+            }
+        })
+        .catch(error => {
+          
+            console.error('Error:', error);
+        }
+
+        );
+
+};
   return (
     <View
       key={index}
@@ -71,7 +120,9 @@ const CategoryThree = ({
         Rs :{data.price}
         </Text>
       </View>
-      <TouchableOpacity style={styles.heartIcon}>
+      <TouchableOpacity style={styles.heartIcon}  onPress={() => {
+              Insert()
+            }} >
         <FontAwesome
           style={{
             color: theme.secondry,

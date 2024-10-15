@@ -27,10 +27,9 @@ import api from "../constants/api"
 const ProductDetailScreen = ({ navigation, theme, reduxLang, route }) => {
   const { productId,datas } = route.params;
 
-  console.log('route', productId);
   const [product, setProduct] = useState([])
-   console.log('price', product.price);
 
+  
   // Header Settings
   useEffect(() => {
     navigation.setOptions({
@@ -82,6 +81,12 @@ const ProductDetailScreen = ({ navigation, theme, reduxLang, route }) => {
   const [data, setdata] = useState(productId)
   const [wiil, setWill] = useState(datas)
 
+ 
+
+  const discount = data.discount_percentage ? parseFloat(data.discount_percentage) : 0;
+  const discountAmount = (data.price * discount) / 100;
+
+  const discountTotalAmount = (data.price - discountAmount);
 
   const [loader, setLoader] = useState(true)
   const [fab, setFab] = useState(false)
@@ -377,7 +382,7 @@ const ProductDetailScreen = ({ navigation, theme, reduxLang, route }) => {
             >
               
               <Image
-            source={{ uri: data?.images? `https://unitdecom.unitdtechnologies.com/storage/uploads/${data.images[0]}` : null }}
+            source={{ uri: data?.images? `https://homeservices.unitdtechnologies.com/storage/uploads/${data.images[0]}` : null }}
 
             resizeMode={"cover"}
             borderRadius={8}
@@ -415,10 +420,10 @@ const ProductDetailScreen = ({ navigation, theme, reduxLang, route }) => {
               }
               ]}
               >
-              Rs :{data?.price ? data?.price : ''}
+              Rs :{discountTotalAmount}
               </Text>
 
-
+              { data.discount_percentage !== null &&
                 <Text
                   style={[
                     styles.discountPriceText,
@@ -431,20 +436,22 @@ const ProductDetailScreen = ({ navigation, theme, reduxLang, route }) => {
                 >
                   { data.price ? data.price : ''}
                 </Text>
-
+           }
+               { data.discount_percentage !== null &&
                 <Text
                   style={[
                     styles.percentText,
                     {
                       color: theme.primary,
-                      fontSize: theme.appFontSize.smallSize - 3,
+                      fontSize: theme.appFontSize.smallSize,
                       fontFamily: theme.appFontSize.fontFamily,
                       borderColor: theme.primary
                     }
                   ]}
                 >
-                  {"35 % OFF"}
+                  {data.discount_percentage}{"% OFF"}
                 </Text>
+        }
               </View>
 
 
@@ -682,6 +689,21 @@ const ProductDetailScreen = ({ navigation, theme, reduxLang, route }) => {
           </View>
         }
         renderItem={({ item, index }) => {
+          const discount = item.discount_percentage ? parseFloat(item.discount_percentage) : 0;
+          // const price = parseFloat(price);
+          console.log('price',item.price)
+          // Calculate the discount amount from the percentage
+          const discountAmount = (item.price * discount) / 100;
+      
+          // Price after applying the discount percentage
+          // const priceAfterDiscount = price - discountAmount;
+      
+          // Calculate total for the product and add to the running total
+        
+          const discountTotalAmount = (item.price - discountAmount);
+    
+          const percentagesym = item.discount_percentage ? "%" : '';
+     
           return (
             <View style={styles.container1}>
       <View
@@ -703,7 +725,7 @@ const ProductDetailScreen = ({ navigation, theme, reduxLang, route }) => {
           }
         >
           <Image
-             source={{ uri: item.images?.[0] ? `https://unitdecom.unitdtechnologies.com/storage/uploads/${item.images[0]}` : null }}
+             source={{ uri: item.images?.[0] ? `https://homeservices.unitdtechnologies.com/storage/uploads/${item.images[0]}` : null }}
             resizeMode={"cover"}
             borderRadius={8}
             style={[
@@ -754,6 +776,13 @@ const ProductDetailScreen = ({ navigation, theme, reduxLang, route }) => {
               <View />
             )} */}
           </View>
+          <View
+            style={{
+              flexDirection: "row",
+              justifyContent: "space-between",
+              width: "65%"
+            }}
+          >
           <Text
             numberOfLines={1}
             style={[
@@ -764,8 +793,36 @@ const ProductDetailScreen = ({ navigation, theme, reduxLang, route }) => {
               }
             ]}
           >
-            Rs :{item.price}
+            Rs :{discountTotalAmount}
           </Text>
+          { item.discount_percentage ===null &&
+          <Text
+            numberOfLines={1}
+            style={[
+              styles.discountPriceText,
+              {
+                color:'red',
+                fontSize: theme.appFontSize.smallSize,
+                fontFamily: theme.appFontSize.fontFamily
+              }
+            ]}
+          >
+            {item.price}
+          </Text>
+        }
+          <Text
+              style={[
+                styles.productPriceText,
+                {
+                  color:'green',
+                  fontSize: theme.appFontSize.smallSize,
+                  fontFamily: theme.appFontSize.fontFamily
+                }
+              ]}
+            >
+              {item.discount_percentage}{percentagesym}
+            </Text>
+          </View>
 
           <View style={styles.cartIconContainer}>
             <ReviewStar
@@ -972,9 +1029,10 @@ const styles = StyleSheet.create({
   },
   percentText: {
     textAlign: "left",
-    paddingHorizontal: 3,
+    paddingHorizontal: 10,
     textDecorationLine: "line-through",
-    borderWidth: 1
+    borderWidth: 1,
+    fontWeight:'bold'
   },
   productDescriptionText: {
     paddingHorizontal: 4,

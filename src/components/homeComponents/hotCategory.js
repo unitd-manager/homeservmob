@@ -14,7 +14,7 @@ import { WIDTH } from "../config"
 import { useNavigation } from "@react-navigation/native"
 import imageBase from "../../constants/imageBase"
 
-const App = ({ theme, reduxLang, categories, textSize }) => {
+const App = ({ theme, reduxLang, categories, textSize,icon,offer }) => {
   const navigation = useNavigation()
 
   return (
@@ -41,7 +41,7 @@ const App = ({ theme, reduxLang, categories, textSize }) => {
         </Text>
 
         <TouchableOpacity
-          onPress={() => navigation.navigate("Category")}
+          onPress={() => navigation.navigate("OfferList",{dataValue: categories,theme:theme,reduxLang:reduxLang,textSize:textSize,icon:icon,offer:offer})}
           style={styles.rowTag}
         >
           <Text
@@ -77,7 +77,7 @@ const App = ({ theme, reduxLang, categories, textSize }) => {
         renderItem={({ item, index }) => {
           return (
             <TouchableOpacity
-              onPress={() => navigation.navigate("Category")}
+              onPress={() => navigation.navigate("OfferList",{dataValue: categories,theme:theme,reduxLang:reduxLang,textSize:textSize,icon:icon,offer:offer})}
               key={index}
               style={[
                 styles.categoryTouch,
@@ -96,7 +96,7 @@ const App = ({ theme, reduxLang, categories, textSize }) => {
                     styles.bold,
                     {
                       color: theme.textColor,
-                      fontSize: theme.appFontSize.smallSize,
+                      fontSize:9,
                       fontFamily: theme.appFontSize.fontFamily
                     }
                   ]}
@@ -117,7 +117,9 @@ const styles = StyleSheet.create({
     margin: 4,
     justifyContent: "center",
     alignItems: "center",
-    borderRadius: 12
+    borderRadius: 12,
+    height:110,
+    width:100
   },
   paddingHot: {
     paddingHorizontal: 5
@@ -138,7 +140,7 @@ const styles = StyleSheet.create({
   },
   imageBackground: {
     height: WIDTH * 0.19,
-    width: WIDTH * 0.22,
+    width: WIDTH * 0.24,
     borderTopLeftRadius: 12,
     borderTopRightRadius: 12
   },

@@ -127,7 +127,7 @@ const App = ({
             style={styles.touchableOpacity}
           >
             <Image
-              source={{ uri: item.images[0] ? `https://unitdecom.unitdtechnologies.com/storage/uploads/${item.images[0]}` : null }}
+              source={{ uri: item.images[0] ? `https://homeservices.unitdtechnologies.com/storage/uploads/${item.images[0]}` : null }}
               resizeMode="cover"
               borderRadius={8}
               style={[styles.imageBackground, { backgroundColor: backgroundColor || theme.backgroundImageColor }]}
