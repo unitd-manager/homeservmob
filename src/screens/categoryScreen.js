@@ -81,7 +81,7 @@ const App = ({ navigation, theme, reduxLang }) => {
     theme.textColor
   ])
   const [categoriess, setCategories] = useState([])
-  console.log('categories',categoriess)
+  
 
   useLayoutEffect(() => {
     api

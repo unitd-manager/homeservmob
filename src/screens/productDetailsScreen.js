@@ -690,15 +690,10 @@ const ProductDetailScreen = ({ navigation, theme, reduxLang, route }) => {
         }
         renderItem={({ item, index }) => {
           const discount = item.discount_percentage ? parseFloat(item.discount_percentage) : 0;
-          // const price = parseFloat(price);
-          console.log('price',item.price)
-          // Calculate the discount amount from the percentage
+         
           const discountAmount = (item.price * discount) / 100;
       
-          // Price after applying the discount percentage
-          // const priceAfterDiscount = price - discountAmount;
-      
-          // Calculate total for the product and add to the running total
+        
         
           const discountTotalAmount = (item.price - discountAmount);
     

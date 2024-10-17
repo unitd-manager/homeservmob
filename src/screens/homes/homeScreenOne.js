@@ -31,18 +31,45 @@ import { useNavigation } from "@react-navigation/native"
 import api from "../../constants/api"
 
 const App = ({ theme, reduxLang,textSize,icon }) => {
-
+  
+  const PAGE_SIZE = 6;
   const navigation = useNavigation()
   const [user, setUserData] = useState();
   const [sliderData, setSliderData] = useState([])
   const [title, setTitle] = useState([])
   const [data, setData] = useState([])
-  const [dataWish, setDataWish] = useState([])
-  console.log('dataWish',dataWish)
+  const [dataWish, setDataWish] = useState()
+  const [newProducts, setNewProducts] = useState([])
+  const [bestSellingProducts, setBestSellingProducts] = useState([])
+  const [mostPopularProducts, setMostPopularProducts] = useState([])
+  const [compareItem, setCompareItem] = useState([])
+  const [currentPage, setCurrentPage] = useState(1);
+
+  // console.log('dataWish',dataWish)
+  // console.log('compareItem',compareItem)
+
+ 
+
   const getUser = async () => {
     let userData = await AsyncStorage.getItem('USER');
     userData = JSON.parse(userData);
     setUserData(userData);
+
+    api
+      .post("/contact/getFavByContactId",{contact_id:userData.contact_id})
+      .then(res => {
+        const productIds = res.data.data.map((element) => element.product_id);  // Extract product_id
+    
+        productIds.forEach((id) => {
+
+                  setDataWish(id)
+
+      });
+      
+      })
+      .catch(err => {
+        console.log(err)
+      })
   };
 
   const contactId = user ? user.contact_id : null;
@@ -51,27 +78,18 @@ const App = ({ theme, reduxLang,textSize,icon }) => {
   useEffect(() => {
     getUser();
   }, [contactId]);
-
-  useEffect(() =>{
-    if (user && user.contact_id) {
-      api
-      .post("/contact/getFavByContactId",{contact_id:user.contact_id})
-      .then(res => {
-        res.data.data.forEach(element => {
-          element.tag = String(element.tag).split(",")
-        })
-        res.data.data.forEach(el => {
-          el.images = String(el.images).split(",")
-        })
-        console.log('wishlists',res.data.data)
-        setDataWish(res.data.data)
-      
-      })
-      .catch(err => {
-        console.log(err)
-      })
-    }
-  },[])
+  // const Insert = (productId) => {
+  //   return api.post("/wishlist/add", { product_id: productId })
+  //     .then(response => {
+  //       console.log("Product inserted into wishlist successfully");
+  //       return response;
+  //     })
+  //     .catch(error => {
+  //       console.log("Error inserting product:", error);
+  //       throw error;
+  //     });
+  // };
+  
 
   const Insert = (item) => {
     // if (contactId) {
@@ -85,12 +103,14 @@ const App = ({ theme, reduxLang,textSize,icon }) => {
         product_id:item, 
     };
     
-    api
+    return api
         .post('/contact/insertToWishlist', wishData)
         .then(response => {
             if (response.status === 200) {
-
-             Alert.alert('Product Add to Wishlist');
+             
+              Alert.alert('Product Add to Wishlist');
+        return response;
+         
 
             } else {
                 console.error('Error');
@@ -105,104 +125,9 @@ const App = ({ theme, reduxLang,textSize,icon }) => {
 
 };
 
-  const categories = [
-    {
-      name: reduxLang.Armchair,
-      icon: "graduation-cap",
-      image: require("../../images/furniture/CustomSize19.png")
-    },
-    {
-      name: reduxLang.Wingchair,
-      icon: "headphones",
-      image: require("../../images/furniture/CustomSize19.png")
-    },
-    {
-      name: reduxLang.Woodchair,
-      icon: "book",
-      image: require("../../images/furniture/CustomSize19.png")
-    },
-    {
-      name: reduxLang.Foldingchair,
-      icon: "gift",
-      image: require("../../images/furniture/CustomSize19.png")
-    },
-    {
-      name: reduxLang.Studentchair,
-      icon: "bicycle",
-      image: require("../../images/furniture/CustomSize19.png")
-    },
-    {
-      name: reduxLang.Sofa,
-      icon: "car",
-      image: require("../../images/furniture/CustomSize19.png")
-    },
-    {
-      name: reduxLang.Gardenchair,
-      icon: "car",
-      image: require("../../images/furniture/CustomSize19.png")
-    },
-    {
-      name: reduxLang.Salonchair,
-      icon: "car",
-      image: require("../../images/furniture/CustomSize19.png")
-    }
-  ]
+  
 
- 
-   // let [data, setdata] = useState([{
-  //   url: require('../../images/furniture/CustomSize19.png'),
-  //   productName: 'Armchair',
-  //   quantity: '120 Products'
-  // },
-  // {
-  //   url: require('../../images/furniture/CustomSize19.png'),
-  //   productName: reduxLang.Sofa,
-  //   quantity: '650 Products'
-  // },
-  // {
-  //   url: require('../../images/furniture/CustomSize19.png'),
-  //   productName: reduxLang.Woodchair,
-  //   quantity: '432 Products'
-  // },
-  // {
-  //   url: require('../../images/furniture/CustomSize19.png'),
-  //   productName: reduxLang.Wingchair,
-  //   quantity: '678 Products'
-  // },
-  // {
-  //   url: require('../../images/furniture/CustomSize19.png'),
-  //   productName: reduxLang.Foldingchair,
-  //   quantity: '789 Products'
-  // },
-  // {
-  //   url: require('../../images/furniture/CustomSize19.png'),
-  //   productName: reduxLang.Studentchair,
-  //   quantity: '120 Products'
-  // },
-  // {
-  //   url: require('../../images/furniture/CustomSize19.png'),
-  //   productName: reduxLang.Gardenchair,
-  //   quantity: '650 Products'
-  // },
-  // {
-  //   url: require('../../images/furniture/CustomSize19.png'),
-  //   productName: reduxLang.Salonchair,
-  //   quantity: '432 Products'
-  // },
-  // {
-  //   url: require('../../images/furniture/CustomSize19.png'),
-  //   productName: 'Desk chair',
-  //   quantity: '678 Products'
-  // },
-  // {
-  //   url: require('../../images/furniture/CustomSize19.png'),
-  //   productName: reduxLang.Studentchair,
-  //   quantity: '789 Products'
-  // }])
 
-  const [newProducts, setNewProducts] = useState([])
-  const [bestSellingProducts, setBestSellingProducts] = useState([])
-  const [mostPopularProducts, setMostPopularProducts] = useState([])
 
   const getSliderDatas = () => {
     api
@@ -226,7 +151,7 @@ const App = ({ theme, reduxLang,textSize,icon }) => {
         res.data.data.forEach(el => {
           el.images = String(el.images).split(",")
         })
-        console.log('bestsellers',res.data.data)
+        
         setBestSellingProducts(res.data.data)
       
       })
@@ -245,7 +170,7 @@ const App = ({ theme, reduxLang,textSize,icon }) => {
         res.data.data.forEach(el => {
           el.images = String(el.images).split(",")
         })
-        console.log('newpro',res.data.data)
+  
         setNewProducts(res.data.data)
       
       })
@@ -272,31 +197,58 @@ const App = ({ theme, reduxLang,textSize,icon }) => {
       })
   }
 
+  const getAllproduct = () => {
+    api
+    .get("/product/getAllProducts", {
+      params: {
+        page: currentPage,
+        pageSize: PAGE_SIZE,
+      },
+    })
+    .then(res => {
+      res.data.data.forEach(element => {
+        element.title = String(element.title).split(",")
+        setTitle(element.title)
+      })
+      res.data.data.forEach(el => {
+        el.images = String(el.images).split(",")
+        
+      })
+      setData(res.data.data)
+    
+    })
+    .catch(err => {
+      console.log("error", err)
+    })
+
+  }
+
+
   useEffect(() => {
     // Fetch data from API
-    api
-      .get("/product/getAllProducts")
-      .then(res => {
-        res.data.data.forEach(element => {
-          element.title = String(element.title).split(",")
-          setTitle(element.title)
-        })
-        res.data.data.forEach(el => {
-          el.images = String(el.images).split(",")
-          
-        })
-        setData(res.data.data)
-      
-      })
-      .catch(err => {
-        console.log("error", err)
-      })
+    
+  }, [])
+
+
+  useEffect(() => {
+    getAllproduct();
+    getUser();
     getSliderDatas()
     getBestSellingProducts()
     getMostPopularProducts()
     getNewProducts()
-  }, [])
+  }, [contactId]);
 
+
+  const loadMoreQuestions = () => {
+    // Check if all questions have been loaded
+    const totalQuestions = data.length;
+    const totalPossiblePages = Math.ceil(totalQuestions / PAGE_SIZE);
+
+    if (currentPage < totalPossiblePages) {
+      setCurrentPage(prevPage => prevPage + 1);
+    }
+  };
  
   const [loader, setLoader] = useState(true)
   const [fab, setFab] = useState(false)
@@ -402,19 +354,19 @@ const App = ({ theme, reduxLang,textSize,icon }) => {
         maxToRenderPerBatch={10}
         updateCellsBatchingPeriod={10}
         keyExtractor={(item, index) => index.toString()}
-        data={data}
+        data={data.slice(0, currentPage * PAGE_SIZE)}
+          onEndReached={loadMoreQuestions}
         columnWrapperStyle={styles.colWrapper}
         renderItem={({ item, index }) => {
+
+
+         const reeeee = item.contactId === contactId
+       
           const discount = item.discount_percentage ? parseFloat(item.discount_percentage) : 0;
-          // const price = parseFloat(price);
-          console.log('price',item.price)
+          
           // Calculate the discount amount from the percentage
           const discountAmount = (item.price * discount) / 100;
-      
-          // Price after applying the discount percentage
-          // const priceAfterDiscount = price - discountAmount;
-      
-          // Calculate total for the product and add to the running total
+  
         
           const discountTotalAmount = (item.price - discountAmount);
     
@@ -557,30 +509,73 @@ const App = ({ theme, reduxLang,textSize,icon }) => {
               />
             </TouchableOpacity> */}
           </View>
-          <TouchableOpacity style={styles.heartIcon}  onPress={() => {
-              Insert(item.product_id);
+          {/* <TouchableOpacity style={styles.heartIcon}  onPress={() => {
+
+              if(reeeee === true){
+                Alert.alert('Product already in Wishlist');
+              
+
+              }else{
+                Insert(item.product_id); 
+                getAllproduct(reeeee)
+              }
+              
             }} >
         <FontAwesome
           style={{
-            color: theme.secondry,
+            color: reeeee === true?'red': theme.secondry,
             fontSize: icon
               ? theme.appFontSize.largeSize
               : theme.appFontSize.mediumSize
           }}
           name={icon ? icon : "heart"}
         />
-      </TouchableOpacity>
+      </TouchableOpacity> */}
+      <TouchableOpacity 
+  style={styles.heartIcon} 
+  onPress={() => {
+    // if(reeeee === true) {
+    //   Alert.alert('Product already in Wishlist');
+    // } else {
+      
+    //     .then(() => {
+    //       // Call to get updated product list after successful insert
+    //       getAllproduct();
+    //     })
+    //     .catch(err => {
+    //       console.log('Error inserting product:', err);
+    //     });
+    // }
+    Insert(item.product_id)
+  }} 
+>
+  <FontAwesome
+    style={{
+      color:theme.secondry,
+      // color: reeeee === true ? 'red' : theme.secondry,
+      fontSize: icon
+        ? theme.appFontSize.largeSize
+        : theme.appFontSize.mediumSize
+    }}
+    name={icon ? icon : "heart"}
+  />
+</TouchableOpacity>
+
         </View>
         
       </View>
      
+          {/* <Text style={styles.pageNumberText}>
+            Page {currentPage} of {Math.ceil(data.length / PAGE_SIZE)}
+          </Text> */}
+        
     </View>
          )
         }}
        // ref={scrollRef}
         ListFooterComponent={renderFooter(theme, loader)}
         onScroll={handleScroll}
-        onEndReached={onEndReached}
+        // onEndReached={onEndReached}
         onEndReachedThreshold={0.3}
         onMomentumScrollBegin={() => {
           onEnDReachedCalledDuringMomentum = false
@@ -736,6 +731,11 @@ const styles = StyleSheet.create({
     alignSelf: "flex-start",
     paddingHorizontal: 23,
     paddingVertical: 15
+  },
+  pageNumberText: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#532c6d',
   },
   fabIcon: {
     paddingBottom: 2

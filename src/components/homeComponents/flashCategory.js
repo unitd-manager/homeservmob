@@ -10,7 +10,7 @@ import imageBase from "../../constants/imageBase"
 const App = ({ theme, reduxLang, categories, productDetailData }) => {
   const navigation = useNavigation()
 
-  console.log('categories',categories)
+
 
   return (
     <View
