@@ -14,6 +14,7 @@ import {
   HEIGHT
 } from "../components/config"
  import api from "../constants/api"
+import { useCart } from "../context/CartContext"
 
 const Tab = createBottomTabNavigator()
 function HomeTabs({ reduxCounter, reduxLang,navigation, theme }) {
@@ -54,8 +55,8 @@ function HomeTabs({ reduxCounter, reduxLang,navigation, theme }) {
         getUserCart();
           },[])
 
-
-const lengthNo =cardData?.length
+const{cart}=useCart();
+const lengthNo =cart?.length
 console.log('length',lengthNo)
       return (
     <Tab.Navigator

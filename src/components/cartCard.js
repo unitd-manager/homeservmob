@@ -16,6 +16,7 @@ import { HEADER_IOS_HEIGHT, HEADER_ANDROID_HEIGHT } from "./config"
 import AsyncStorage from "@react-native-async-storage/async-storage"
 import { useNavigation } from "@react-navigation/native"
 import api from "../constants/api"
+import { useCart } from "../context/CartContext"
 
 const cartCard = ({ key, name, url, theme, productDetailData,priceNet,price,quantity,basketId,calculation,onUpdateQuantity,getUser}) => {
   const navigation = useNavigation()
@@ -24,7 +25,7 @@ const cartCard = ({ key, name, url, theme, productDetailData,priceNet,price,quan
   }, []) 
 
  
-    
+    const{removeItem}=useCart();
       const discount = priceNet ? parseFloat(priceNet) : 0;
       // const price = parseFloat(price);
       console.log('price',price)
@@ -112,7 +113,7 @@ const cartCard = ({ key, name, url, theme, productDetailData,priceNet,price,quan
       );
     }
   };
-  const removeItem = (item) => {
+  const removeCartItem = (item) => {
     colorfulAlert(
       'Confirm Removal',
       'Are you sure you want to remove this item from the cart?',
@@ -123,7 +124,7 @@ const cartCard = ({ key, name, url, theme, productDetailData,priceNet,price,quan
         },
         {
           text: 'Remove',
-          onPress: () => remove(item),
+          onPress: () => removeItem(item),
           style: 'destructive' // Make the button red for emphasis
         },
       ]
@@ -279,7 +280,7 @@ const cartCard = ({ key, name, url, theme, productDetailData,priceNet,price,quan
           {/* <Text>{quantitys}</Text> */}
         </View>
       </View>
-      <TouchableOpacity style={styles.heartIcon} onPress={() => removeItem(basketId)}>
+      <TouchableOpacity style={styles.heartIcon} onPress={() => removeCartItem(basketId)}>
         <FontAwesome
           style={{
             color: theme.secondry,

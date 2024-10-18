@@ -16,6 +16,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage"
 import api from "../constants/api"
 import LoginStack from "../router/stacks/loginStack"
 import { useNavigation } from "@react-navigation/native"
+import { useCart } from "../context/CartContext"
 
 const tagsFun = (theme, array, index, onChangeSearch) => (
   <TouchableOpacity
@@ -166,9 +167,9 @@ const Counter = ({
   }, [contactId]);
 
   
-  const [cart, setCart] = useState([]);
+  //const [cart, setCart] = useState([]);
   // console.log('cart', cart);
-  
+  const{addItem,cart,updateItem}=useCart();
  
   const onPressSignIn = () => {
     navigation.navigate("Login");
@@ -177,13 +178,21 @@ const Counter = ({
 
     if (contactId !== null) {
 
-      api
-        .post('/orders/getBasket', {contact_id: contactId})
-        .then(res => {
-          // console.log('status', res.data.data);
-          setCart(res.data.data)
-            });
-    const registerData = {
+      // api
+      //   .post('/orders/getBasket', {contact_id: contactId})
+      //   .then(res => {
+      //     // console.log('status', res.data.data);
+      //     setCart(res.data.data)
+      //       });
+      const alreadyincart = cart.find(it => it.product_id ===productDetailData.product_id );
+    if(alreadyincart){
+     alreadyincart.qty += quantityPlus;
+     updateItem(alreadyincart)
+     setaddtoCartModalVisible(!addtoCartmodalVisible)
+  
+     navigation.push("cartScreen",{update:update});
+    }else{
+      const registerData = {
       product_id: productDetailData.product_id,
       contact_id: contactId,
       unit_price: productDetailData.price,
@@ -191,23 +200,28 @@ const Counter = ({
     };
     console.log('registerData', registerData);
     
-    api
-      .post('/orders/insertbasketAddCart', registerData)
-      .then(response => {
-        if (response.status === 200) {
+    // api
+    //   .post('/orders/insertbasketAddCart', registerData)
+    //   .then(response => {
+    //     if (response.status === 200) {
          
-          // Alert.alert('You have successfully registered');
-          // navigation.navigate(StackNav.ProductViewCart);
-          setaddtoCartModalVisible(!addtoCartmodalVisible)
-          //setUpdate(!update)
+    //       // Alert.alert('You have successfully registered');
+    //       // navigation.navigate(StackNav.ProductViewCart);
+    //       setaddtoCartModalVisible(!addtoCartmodalVisible)
+    //       //setUpdate(!update)
+    //       navigation.push("cartScreen",{update:update});
+    //     } else {
+    //       console.error('Error');
+    //     }
+    //   })
+    //   .catch(error => {
+    //     console.error('Error:', error);
+    //   });
+    addItem(registerData)
+    setaddtoCartModalVisible(!addtoCartmodalVisible)
+  
           navigation.push("cartScreen",{update:update});
-        } else {
-          console.error('Error');
         }
-      })
-      .catch(error => {
-        console.error('Error:', error);
-      });
     } else {
       Alert.alert(
         'Please Login',

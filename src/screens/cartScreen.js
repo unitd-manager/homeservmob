@@ -18,10 +18,14 @@ import WishlistCategory from "../components/wishlistCategory"
 import AsyncStorage from "@react-native-async-storage/async-storage"
 import imageBase from "../constants/imageBase"
 import api from "../constants/api"
+import { useCart } from "../context/CartContext"
+
 
 const App = ({ navigation, theme, reduxLang,route }) => {
   console.log('route',route)
   const update = route?.params?.update || null
+
+  const { fetchAllCartItems,cart,removeItem } = useCart();
   // Header Settings
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -41,7 +45,7 @@ const App = ({ navigation, theme, reduxLang,route }) => {
 
   const [promoCode, onChangePromoCode] = React.useState("")
 
- 
+ console.log('cartitems from context',cart);
   const onPressSignIn = () => {
     navigation.navigate("Login");
   };
@@ -71,8 +75,10 @@ const App = ({ navigation, theme, reduxLang,route }) => {
       const user = JSON.parse(userData);
       setUserContactId(user && user.contact_id);
       if (user && user.contact_id) {
-        const response = await api.post('/orders/getBasket', { contact_id: user.contact_id });
-        setCartData(response.data.data);
+        // const response = await api.post('/orders/getBasket', { contact_id: user.contact_id });
+       
+        fetchAllCartItems(user.contact_id)
+        // setCartData(response.data.data);
       }
       else {
         Alert.alert(
@@ -297,7 +303,7 @@ const App = ({ navigation, theme, reduxLang,route }) => {
       >
         
         <View>
-        {cardData && cardData.map((item, index) => {
+        {cart && cart.map((item, index) => {
   console.log('Item:', item.images); // This will log each item in the cardData array
   console.log('Item:', item.price);
   console.log('Itediscount:', item.discount_amount);
@@ -310,7 +316,7 @@ const App = ({ navigation, theme, reduxLang,route }) => {
       quantity={item.qty}
       name={item.title}
       basketId={item.basket_id}
-      calculation={cardData}
+      calculation={cart}
       theme={theme}
       getUser={getUserCart}
       onUpdateQuantity={newQuantity => handleQuantityChange(index, newQuantity)}
