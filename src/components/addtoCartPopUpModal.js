@@ -186,7 +186,7 @@ const Counter = ({
       //       });
       const alreadyincart = cart.find(it => it.product_id ===productDetailData.product_id );
     if(alreadyincart){
-     alreadyincart.qty += quantityPlus;
+     alreadyincart.qty += parseFloat(quantityPlus);
      updateItem(alreadyincart)
      setaddtoCartModalVisible(!addtoCartmodalVisible)
   

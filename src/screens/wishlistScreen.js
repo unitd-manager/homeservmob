@@ -18,19 +18,19 @@ import api from "../constants/api";
 
 const App = ({ navigation, theme, reduxLang, route }) => {
   const [data, setData] = useState([]);
+  const [userData, setUserData] = useState();
   const [loader, setLoader] = useState(true);
   const [fab, setFab] = useState(false);
   const [addtoCartmodalVisible, setaddtoCartModalVisible] = useState(false);
   const [gridView, setGridView] = useState(true);
   const scrollRef = useRef(null);
-  let onEnDReachedCalledDuringMomentum;
 
   // Fetch data from API
   useEffect(() => {
     const fetchData = async () => {
       const userData = await AsyncStorage.getItem('USER');
       const user = JSON.parse(userData);
-      
+      setUserData(user);
       if (user && user.contact_id) {
         api
         .post("/contact/getFavByContactId",{contact_id:user.contact_id})
@@ -85,6 +85,17 @@ const App = ({ navigation, theme, reduxLang, route }) => {
     })
   };
 
+  const clearAll = async () => {
+    api
+    .post("/contact/clearWishlistItems",{contact_id:userData.contact_id})
+    .then(res => {      
+      console.log('wishlists',res.data.data)
+    })
+    .catch(err => {
+      console.log(err)
+    })
+  };
+
   const deleteLabel = () => (
     <View style={styles.deleteTextView}>
       <Text
@@ -95,7 +106,7 @@ const App = ({ navigation, theme, reduxLang, route }) => {
       >
         {reduxLang.RemoveAll}
       </Text>
-      <TouchableOpacity>
+      <TouchableOpacity onPress={clearAll()}>
         <FontAwesome
           style={{
             color: theme.secondry,
