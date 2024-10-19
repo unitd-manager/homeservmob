@@ -310,6 +310,7 @@ const App = ({ navigation, theme, reduxLang,route }) => {
   return (
     <CartCard
       key={index}
+      item={item}
       url={{ uri: `${imageBase}${item.images}` }}
       price={item.price}
       priceNet={item.discount_percentage}

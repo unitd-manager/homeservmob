@@ -18,7 +18,7 @@ import { useNavigation } from "@react-navigation/native"
 import api from "../constants/api"
 import { useCart } from "../context/CartContext"
 
-const cartCard = ({ key, name, url, theme, productDetailData,priceNet,price,quantity,basketId,calculation,onUpdateQuantity,getUser}) => {
+const cartCard = ({ key, name, url, theme, productDetailData,priceNet,price,quantity,basketId,calculation,onUpdateQuantity,getUser,item}) => {
   const navigation = useNavigation()
   useEffect(() => {
     getUser()
@@ -280,7 +280,7 @@ const cartCard = ({ key, name, url, theme, productDetailData,priceNet,price,quan
           {/* <Text>{quantitys}</Text> */}
         </View>
       </View>
-      <TouchableOpacity style={styles.heartIcon} onPress={() => removeCartItem(basketId)}>
+      <TouchableOpacity style={styles.heartIcon} onPress={() => removeCartItem(item)}>
         <FontAwesome
           style={{
             color: theme.secondry,

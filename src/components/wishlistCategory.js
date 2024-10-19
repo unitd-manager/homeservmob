@@ -17,6 +17,7 @@ import ReviewStar from "./reviewStar"
 import { HEIGHT } from "./config"
 import { useNavigation } from "@react-navigation/native"
 import api from "../constants/api"
+import AsyncStorage from "@react-native-async-storage/async-storage"
 const App = ({
   theme,
   reduxLang,
@@ -29,25 +30,31 @@ const App = ({
   const [data, setData] = useState([])
   
   console.log('daaa',data)
-  useEffect(() => {
-    fetchProductData();
-  }, []);
+ 
 
-  const fetchProductData = () => {
-    api.get("/product/getAllProducts")
+  const fetchProductData = async() => {
+    const userData = await AsyncStorage.getItem('USER');
+    const user = JSON.parse(userData);
+    
+    if (user && user.contact_id) {
+    api.post("/contact/getFavByContactId",{contact_id:user.contact_id})
       .then(res => {
         const formattedData = res.data.data.map(item => ({
           ...item,
           title: String(item.title).split(","),
           images: String(item.images).split(",")
         }));
+        console.log('wishlistdataincartpage',formattedData)
         setData(formattedData);
       })
       .catch(error => {
         console.log("Error fetching product data:", error);
       });
+    }
   };
-
+  useEffect(() => {
+    fetchProductData();
+  }, []);
 
   const [addtoCartmodalVisible, setaddtoCartModalVisible] = useState(false)
 
