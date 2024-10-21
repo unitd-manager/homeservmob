@@ -10,7 +10,7 @@ const listView = (theme, iconName, text, navigation, navigate) => (
   <TouchableOpacity
     onPress={() => {
       if (navigate !== "") {
-        navigation.navigate(navigate)
+        navigation.navigate(navigate,{categoryIds:'0'})
       }
     }}
     style={styles.simpleList}

@@ -241,6 +241,8 @@ const App = ({
 }) => {
   // Header Settings
   const route = useRoute()
+  const { categoryIds } = route.params;
+ 
 
   useEffect(() => {
     navigation.setOptions({
@@ -358,8 +360,9 @@ const App = ({
   
   const categoryTitle =(categoryId)=>{
     console.log('categorieTitles',categoryId)
+ 
 
-    if(categoryId === undefined){
+    if(categoryId === '0'){
       api
       .get("/product/getAllProducts")
       .then(res => {
@@ -397,7 +400,8 @@ const App = ({
 
 
   useLayoutEffect(() => {
-    categoryTitle()
+    console.log('name',categoryIds)
+    categoryTitle(categoryIds)
   }, [])
   const [loader, setLoader] = useState(false)
   const [fab, setFab] = useState(false)
@@ -438,7 +442,7 @@ const App = ({
 
   /////
 
-  const [selectedTab, setSelectedTab] = React.useState(0)
+  const [selectedTab, setSelectedTab] = React.useState(categoryIds)
 
   const [modalVisible, setModalVisible] = useState(false)
   const [gridView, setGridView] = useState(true)
@@ -826,20 +830,23 @@ const App = ({
             borderColor: theme.textColor,
             backgroundColor: theme.primary
           }}
-          keyExtractor={(item, index) => index.toString()}
+          keyExtractor={(items, index) => index.toString()}
           renderItem={item => (
             <TouchableOpacity
               onPress={() => {
-                console.log('categoryTitle',item.item.category_id)
+                
+               
                 categoryTitle(item.item.category_id)
-                if (selectedTab !== item.index) {
+                if (selectedTab !== item.item.category_id) {
+                   console.log('categoryTitle',item.item.category_id)
+                  console.log('index',item.index)
                   setdata(data)
                   const delay = setInterval(function() {
                     // setdata(data)
                      clearInterval(delay)
                     categoryTitle(item.item.category_id)
                   }, 2000)
-                  setSelectedTab(item.index)
+                  setSelectedTab(item.item.category_id)
                  
                   
                 }
@@ -854,18 +861,18 @@ const App = ({
                   styles.horiCategoryText,
                   {
                     color:
-                      selectedTab === item.index
+                      selectedTab === item.item.category_id
                         ? theme.primaryTextColor
                         : theme.primaryDark,
                     fontSize: theme.appFontSize.largeSize,
                     fontFamily: theme.appFontSize.fontFamily,
-                    fontWeight: selectedTab === item.index ? "bold" : "normal"
+                    fontWeight: selectedTab === item.item.category_id ? "bold" : "normal"
                   }
                 ]}
               >
                 {item.item.category_title}
               </Text>
-              {selectedTab === item.index ? (
+              {selectedTab === item.item.category_id ? (
                 <View
                   style={[
                     styles.selectedBorder,
