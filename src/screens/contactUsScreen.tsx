@@ -13,6 +13,7 @@ import { StackNavigationProp } from '@react-navigation/stack';
 import { HEIGHT } from '../components/config';
 import CustomBtn from '../components/customBtn';
 import { appColorsType } from '../redux/types/types';
+import api from '../constants/api';
 type RootStackParamList = {
   Settings: undefined;
 };
@@ -45,7 +46,21 @@ const App = ({ navigation, theme, reduxLang }: IProps) => {
   const [phone, onChangePhone] = React.useState('');
   let secondTextInput: any = '';
   let thirdTextInput: any = '';
-
+  console.log('name',name);
+  console.log('mail',email);
+  console.log('comments',phone);
+const createEnquiry=()=>{
+  api
+      .post("/enquiry/insertEnquiry", {
+       email,first_name:name,comments:phone
+      })
+      .then(res => {
+        console.log('res',res)
+      })
+      .catch(err => {
+        console.log(err)
+      })
+}
   return (
     <SafeAreaView
       style={[
@@ -139,7 +154,7 @@ const App = ({ navigation, theme, reduxLang }: IProps) => {
             }
           />
 
-          <CustomBtn onPressFun={() => { }} theme={theme} title={reduxLang.Save}></CustomBtn>
+          <CustomBtn onPressFun={() => { createEnquiry()}} theme={theme} title={reduxLang.Save}></CustomBtn>
         </KeyboardAvoidingView>
       </ScrollView>
     </SafeAreaView>

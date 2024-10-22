@@ -47,8 +47,6 @@ const ProductDetailScreen = ({ navigation, theme, reduxLang, route }) => {
     theme.secondryBackgroundColor,
     theme.textColor
   ])
-
-
   // const[product,setProduct] = useEffect([])
   
   useEffect(() => {
@@ -212,7 +210,7 @@ const ProductDetailScreen = ({ navigation, theme, reduxLang, route }) => {
             ]
           }
         ]}
-      >
+      > 
         <TouchableOpacity
           style={styles.headerIconTouchable}
           onPress={() => navigation.pop()}
