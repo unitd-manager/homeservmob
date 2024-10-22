@@ -12,10 +12,10 @@ import { useNavigation } from "@react-navigation/native"
 import imageBase from "../../constants/imageBase";
 const WIDTH = Dimensions.get("window").width
 
-const categoryTwo = (navigation, index, theme, url, name) => (
+const categoryTwo = (navigation, index, theme, url, name,categoryId) => (
   <TouchableOpacity
     key={index}
-    onPress={() => navigation.navigate('Shop')}
+    onPress={() => navigation.navigate('Shop',{categoryIds:categoryId})}
     style={styles.touchableOpacity}
   >
     <ImageBackground
@@ -55,7 +55,7 @@ const App = ({ data, theme }) => {
   return (
    <View>
   {data.map((value, index) =>
-    categoryTwo(navigation, index, theme, value.images, value.category_title)
+    categoryTwo(navigation, index, theme, value.images, value.category_title,value.category_id)
   )}
 </View>
 

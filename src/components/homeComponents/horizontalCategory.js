@@ -34,7 +34,7 @@ const App = ({ theme, reduxLang, backgroundColor, iconColor }) => {
           <TouchableOpacity
             onPress={() =>
               navigation.push("Shop", {
-                categoriesType: item,
+                categoriesType: item,categoryIds:item.category_id
               })
             }
             key={index}
