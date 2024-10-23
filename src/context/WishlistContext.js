@@ -40,8 +40,14 @@ export const WishlistProvider = ({ children }) => {
     
     const fetchWishlistItems = async (id) => {
       try {
-        const response = await api.post('/contact/getFavByContactId', { contact_id: id }); // Replace with your API endpoint
-        console.log('resp of fetchCartItems ',response.data.data);
+        const response = await api.post('/contact/getFavByContactId', { contact_id: id }); 
+        console.log('resp of fetchwishlistItems ',response.data.data);
+        response.data.data.forEach(element => {
+          element.tag = String(element.tag).split(",")
+        })
+        response.data.data.forEach(el => {
+          el.images = String(el.images).split(",")
+        })
         dispatch({ type: 'SET_ITEMS', payload: response.data.data });
       } catch (error) {
         console.error('Error fetching cart items:', error);
@@ -51,11 +57,17 @@ export const WishlistProvider = ({ children }) => {
     const user = JSON.parse(userData);
     if (user && user.contact_id) {
     fetchWishlistItems(user.contact_id);}
-  }, []);
+  }, []); 
   const fetchAllWishlistItems = async (id) => {
     try {
       const response = await api.post('/contact/getFavByContactId', { contact_id: id }); // Replace with your API endpoint
      console.log('resp of fetchAllCartItems ',response.data.data);
+     response.data.data.forEach(element => {
+      element.tag = String(element.tag).split(",")
+    })
+    response.data.data.forEach(el => {
+      el.images = String(el.images).split(",")
+    })
       dispatch({ type: 'SET_ITEMS', payload: response.data.data });
     } catch (error) {
       console.error('Error fetching cart items:', error);
@@ -64,8 +76,8 @@ export const WishlistProvider = ({ children }) => {
   // Add item
   const addWishlistItem = async (item) => {
     try {
-      const response = await api.post('/orders/insertbasketAddCart', item); // Replace with your API endpoint
-      dispatch({ type: 'ADD_ITEM', payload: response.data });
+      const response = await api.post('/contact/insertToWishlist', item); // Replace with your API endpoint
+      dispatch({ type: 'ADD_ITEM', payload: response.data.data });
     } catch (error) {
       console.error('Error adding item:', error);
     }
@@ -74,7 +86,7 @@ export const WishlistProvider = ({ children }) => {
   // Remove item
   const removeWishlistItem = async (item) => {
     try {
-      await api.post(`/orders/deleteBasket`,{basket_id:item.basket_id}); // Replace with your API endpoint
+      await api.post(`/contact/deleteWishlistItem`,{Wish_list_id:item.Wish_list_id}); // Replace with your API endpoint
       dispatch({ type: 'REMOVE_ITEM', payload: item });
     } catch (error) {
       console.error('Error removing item:', error);

@@ -15,6 +15,7 @@ import renderFooter from "../components/renderFooter";
 import AsyncStorage from "@react-native-async-storage/async-storage"
 import SearchListCard from "../components/searchListCard";
 import api from "../constants/api";
+import { useWishlist } from "../context/WishlistContext";
 
 const App = ({ navigation, theme, reduxLang, route }) => {
   const [data, setData] = useState([]);
@@ -25,6 +26,8 @@ const App = ({ navigation, theme, reduxLang, route }) => {
   const [gridView, setGridView] = useState(true);
   const scrollRef = useRef(null);
 
+const{fetchAllWishlistItems,wishlist}=useWishlist()
+
   // Fetch data from API
   useEffect(() => {
     const fetchData = async () => {
@@ -32,22 +35,9 @@ const App = ({ navigation, theme, reduxLang, route }) => {
       const user = JSON.parse(userData);
       setUserData(user);
       if (user && user.contact_id) {
-        api
-        .post("/contact/getFavByContactId",{contact_id:user.contact_id})
-        .then(res => {
-          res.data.data.forEach(element => {
-            element.tag = String(element.tag).split(",")
-          })
-          res.data.data.forEach(el => {
-            el.images = String(el.images).split(",")
-          })
-          console.log('wishlists',res.data.data)
-          setData(res.data.data)
+        fetchAllWishlistItems(user.contact_id)
         
-        })
-        .catch(err => {
-          console.log(err)
-        })
+        
       }
       
     };
@@ -84,7 +74,7 @@ const App = ({ navigation, theme, reduxLang, route }) => {
       console.log(err)
     })
   };
-
+console.log('wishlist',wishlist);
   const clearAll = async () => {
     api
     .post("/contact/clearWishlistItems",{contact_id:userData.contact_id})
@@ -172,13 +162,13 @@ const App = ({ navigation, theme, reduxLang, route }) => {
         maxToRenderPerBatch={10}
         updateCellsBatchingPeriod={10}
         keyExtractor={(item) => item?.id?.toString()} // Adjust according to your data structure
-        data={data}
+        data={wishlist}
         renderItem={({ item }) =>
           !gridView ? (
             <SearchListCard
               icon={"trash"}
               data={item}
-              handleDelete={handleDelete} // Pass delete function to child component if needed
+              handleDelete={()=>handleDelete()} // Pass delete function to child component if needed
               reduxLang={reduxLang}
               theme={theme}
             />

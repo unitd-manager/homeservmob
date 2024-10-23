@@ -166,7 +166,7 @@ console.log('orders',orders);
             {/* {orders.filter(order => order.order_status === ['On Hold', 'In Progress', 'Completed'][screen]).map(order => (
               card(theme, navigation, reduxLang, order)
             ))} */}
-             {orders.map(order => (
+             {orders?.map(order => (
               card(theme, navigation, reduxLang, order)
             ))}
           </View>
