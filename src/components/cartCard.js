@@ -18,17 +18,17 @@ import { useNavigation } from "@react-navigation/native"
 import api from "../constants/api"
 import { useCart } from "../context/CartContext"
 
-const cartCard = ({ key, name, url, theme, productDetailData,priceNet,price,quantity,basketId,calculation,onUpdateQuantity,getUser,item}) => {
+const cartCard = ({ key, name, url, theme,priceNet,price,quantity,basketId,calculation,onUpdateQuantity,getUser,item}) => {
   const navigation = useNavigation()
   useEffect(() => {
     getUser()
   }, []) 
-
+   console.log('priceNet',item)
  
     const{removeItem}=useCart();
       const discount = priceNet ? parseFloat(priceNet) : 0;
       // const price = parseFloat(price);
-      console.log('price',price)
+      // console.log('price',price)
       // Calculate the discount amount from the percentage
       const discountAmount = (price * discount) / 100;
   
@@ -40,64 +40,18 @@ const cartCard = ({ key, name, url, theme, productDetailData,priceNet,price,quan
       const discountTotalAmount = (price - discountAmount);
 
       const percentagesym = priceNet ? "%" : '';
-  console.log('discountprice',discountAmount)
-  console.log('discountTotalAmount',discountTotalAmount)
-  // const [quantityPlus, SetqunatityPlus] = useState(quantity);
-  // const [quantitys, setQuantity] = useState(quantity);
-  // const handleIncrement = () => {
-  //   setQuantity(quantitys + 1);
-  // };
-
-  // const handleDecrement = () => {
-  //   if (quantitys > 1) {
-  //     setQuantity(quantitys - 1);
-  //   }
-  // };// Assuming initial quantity is 1
-
   
-
   const [quantitys, setQuantity] = useState(quantity); // Assuming initial quantity is 1
-  const [userContactId, setUserContactId] = useState(null);
-  
  
-  const [cart, setCart] = useState([]);
-  // const handleQuantityChange = (value) => {
-  //   setQuantity(value);
-  // };
-
-  // const handleQuantityChange = text => {
-  //   const newQuantity = parseInt(text, 10) || 0;
-  //   setQuantity(newQuantity);
-  //   onUpdateQuantity(newQuantity);
-  // };
-
-  const handleQuantityChange = (text) => {
-    // Convert text to number
+    const handleQuantityChange = (text) => {
+   // Convert text to number
     const newQuantity = parseInt(text, 10) || 0;
     // Update the quantity state
     setQuantity(newQuantity);
     // Pass the updated quantity to the parent component
     onUpdateQuantity(newQuantity);
   };
-  // console.log('quantityPlus',quantitys)
-  // console.log('basketId',basketId)
-  // const getUserCarts = async () => {
-  //   try {
-  //     const userData = await AsyncStorage.getItem('USER');
-  //     const user = JSON.parse(userData);
-  //     setUserContactId(user?.contact_id || null);
-  //     if (user && user.contact_id) {
-  //       const response = await api.post('/orders/getBasket', { contact_id: user.contact_id });
-  //       setCart(response.data.data);
-  //     }
-  //   } catch (error) {
-  //     console.error('Error fetching cart:', error);
-  //   }
-  // };
 
-  // useEffect(() => {
-  //   getUserCarts();
-  // }, []);
   const colorfulAlert = (title, message, buttons) => {
     if (Platform.OS === 'ios') {
       Alert.alert(title, message, buttons);
@@ -130,24 +84,7 @@ const cartCard = ({ key, name, url, theme, productDetailData,priceNet,price,quan
       ]
     );
   };
-  const remove = async item => {
-    try {
-      await api.post('/orders/deleteBasket', { basket_id:item});
-      // await getUserCart();
-      Alert.alert('Item removed from cart successfully');
-      getUser();
-    } catch (error) {
-      console.error('Error removing item:', error);
-    }
-  };
 
-  const calculateTotal = () => {
-    return calculation.reduce((total, product) => {
-      
-      return total + (parseFloat(product.price) * parseFloat(quantitys));
-    }, 0).toFixed(2);
-  };
-  
   
   return (
     <View
@@ -162,7 +99,7 @@ const cartCard = ({ key, name, url, theme, productDetailData,priceNet,price,quan
       <TouchableOpacity
         onPress={() =>
           navigation.push("ProductDetail", {
-            dataImages: productDetailData
+            productId: item ,datas:calculation
           })
         }
       >
@@ -193,7 +130,7 @@ const cartCard = ({ key, name, url, theme, productDetailData,priceNet,price,quan
             >
               {discountTotalAmount}
             </Text>
-
+            { priceNet !==null &&
             <Text
               style={[
                 styles.discountPriceText,
@@ -206,6 +143,8 @@ const cartCard = ({ key, name, url, theme, productDetailData,priceNet,price,quan
             >
               {price}
             </Text>
+             }
+          { priceNet !==null &&
             <Text
               style={[
                 styles.productPriceText,
@@ -218,6 +157,7 @@ const cartCard = ({ key, name, url, theme, productDetailData,priceNet,price,quan
             >
               {priceNet}{percentagesym}
             </Text>
+}
           </View>
           <Text
             style={[

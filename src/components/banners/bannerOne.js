@@ -72,7 +72,7 @@ const bannerOne = ({ theme, images, autoMove, height }) => {
           return (
             <Image
               key={index}
-              source={{ uri: `${imageBase}${item.name}` }}
+              source={{ uri: `${imageBase}${item.file_name}` }}
               borderRadius={10}
               style={
                 height

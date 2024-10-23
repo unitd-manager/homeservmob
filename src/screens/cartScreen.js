@@ -22,7 +22,7 @@ import { useCart } from "../context/CartContext"
 
 
 const App = ({ navigation, theme, reduxLang,route }) => {
-  console.log('route',route)
+ 
   const update = route?.params?.update || null
 
   const { fetchAllCartItems,cart,removeItem } = useCart();
@@ -45,30 +45,12 @@ const App = ({ navigation, theme, reduxLang,route }) => {
 
   const [promoCode, onChangePromoCode] = React.useState("")
 
- console.log('cartitems from context',cart);
   const onPressSignIn = () => {
     navigation.navigate("Login");
   };
-  const [cardData, setCartData] = useState([]);
+  const [carts, setCartData] = useState(cart);
   const [userContactId, setUserContactId] = useState(null);
-  // const [update, setUpdate] = useState(false);
-  // let [cardData] = useState([
-  //   {
-  //     url: require("../images/headPhone/CustomSize3.png"),
-  //     productName: reduxLang.JBL,
-  //     quantity: "120 Products"
-  //   },
-  //   {
-  //     url: require("../images/headPhone/CustomSize3.png"),
-  //     productName: reduxLang.Sony,
-  //     quantity: "650 Products"
-  //   }
-  // ])
-
-  
-  console.log('cardData',cardData)
-
-
+ 
   const getUserCart = async () => {
     try {
       const userData = await AsyncStorage.getItem('USER');
@@ -83,7 +65,7 @@ const App = ({ navigation, theme, reduxLang,route }) => {
       else {
         Alert.alert(
           'Please Login',
-          'You need to log in to add items to the cart.',
+          'You need to login to add items to the cart.',
           [
              {
               text: 'Cancel',
@@ -108,40 +90,6 @@ const App = ({ navigation, theme, reduxLang,route }) => {
   useEffect(()=>{
     getUserCart();
       },[navigation])
-  // useEffect(() => {
-  //   getUserCart();
-  // }, []);
-// const ViewCard =() =>{
-//   if ( contactId && contactId !== null) {
-
-//     api
-//       .post('/orders/getBasket', {contact_id: contactId})
-//       .then(res => {
-//         // console.log('status', res.data.data);
-//         setCartData(res.data.data)
-//           });
-//         } else {
-//           Alert.alert(
-//             'Please Login',
-//             'You need to log in to add items to the cart.',
-//             [
-//                {
-//                 text: 'Cancel',
-//                 style: 'cancel',
-//               },
-//               {
-//                 text: 'Login',
-//                 onPress: onPressSignIn,
-//               },
-//             ]
-//           );
-//         }
-    
-// }
-
-// useEffect(() => {
-//   ViewCard();
-// }, [contactId]);
   const headerFun = text => (
     <View
       style={[
@@ -208,35 +156,15 @@ const App = ({ navigation, theme, reduxLang,route }) => {
       </Text>
     </View>
   )
-  // const [user, setUserData] = useState();
-  // const getUser = async () => {
-  //   let userData = await AsyncStorage.getItem('USER');
-  //   userData = JSON.parse(userData);
-  //   setUserData(userData);
-  // };
-
-  // const contactId = user ? user.contact_id : null;
-
-
-  // useEffect(() => {
-  //   getUser();
-  // }, [navigation,contactId,user]);
-
- 
-
-  // console.log('contactId', contactId);
-
-  // const handleQuantityChange = (newQuantity) => {
-  //   setQuantity(newQuantity);
-  // };
+  
  
   const handleQuantityChange = (index, newQuantity) => {
-    const updatedCartData = [...cardData];
+    const updatedCartData = [...cart];
     updatedCartData[index].qty = newQuantity;
     setCartData(updatedCartData);
   };
   const calculateTotal = () => {
-    return cardData.reduce((total, product) => {
+    return cart.reduce((total, product) => {
       const discount = product.discount_amount ? parseFloat(product.discount_amount) : 0;
       const priceAfterDiscount = parseFloat(product.price) - discount;
       
@@ -244,7 +172,7 @@ const App = ({ navigation, theme, reduxLang,route }) => {
     }, 0).toFixed(2);
   };
   const calculatepercentageTotals = () => {
-    return cardData.reduce((total, product) => {
+    return cart.reduce((total, product) => {
       const discount = product.discount_percentage ? parseFloat(product.discount_percentage) : 0;
       const price = parseFloat(product.price);
       
@@ -260,7 +188,7 @@ const App = ({ navigation, theme, reduxLang,route }) => {
   };
   
   const calculatepercentageTotal = () => {
-    return cardData.reduce((total, product) => {
+    return cart.reduce((total, product) => {
       const discount = product.discount_percentage ? parseFloat(product.discount_percentage) : 0;
       const price = parseFloat(product.price);
       
@@ -276,14 +204,13 @@ const App = ({ navigation, theme, reduxLang,route }) => {
   };
   
   const calculateSubTotal = () => {
-    return cardData.reduce((total, product) => {
+    return cart.reduce((total, product) => {
      
       return total + (parseFloat(product.price) * parseFloat(product.qty));
     }, 0).toFixed(2);
   };  
   const calculateDicountTotal = () => {
-    return cardData.reduce((total, product) => {
-     console.log('total discount',parseFloat(product.discount_amount))
+    return cart.reduce((total, product) => {
       return total + (parseFloat(product.discount_amount));
     }, 0).toFixed(2);
   };
@@ -304,9 +231,7 @@ const App = ({ navigation, theme, reduxLang,route }) => {
         
         <View>
         {cart && cart.map((item, index) => {
-  console.log('Item:', item.images); // This will log each item in the cardData array
-  console.log('Item:', item.price);
-  console.log('Itediscount:', item.discount_amount);
+ 
   return (
     <CartCard
       key={index}
@@ -393,10 +318,10 @@ const App = ({ navigation, theme, reduxLang,route }) => {
             marginVertical: 5
           }}
         >
-          { userContactId !== null && cardData.length !== 0 &&
+          { userContactId !== null && cart.length !== 0 &&
           <CustomBtn
             onPressFun={() => {
-              navigation.navigate("ShippingAddress",{datas:cardData,total:calculatepercentageTotals(),percentage:calculatepercentageTotal(),subTotal:calculateSubTotal()})
+              navigation.navigate("ShippingAddress",{datas:cart,total:calculatepercentageTotals(),percentage:calculatepercentageTotal(),subTotal:calculateSubTotal()})
             }}
             theme={theme}
             bold={true}

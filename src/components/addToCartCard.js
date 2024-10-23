@@ -23,7 +23,7 @@ const CategoryThree = ({
       onPress={() => {
         setaddtoCartModalVisible(!addtoCartmodalVisible)
         navigation.push("ProductDetail", {
-          dataImages: productDetailData
+          productId: productDetailData
         })
       }}
       style={[
@@ -35,7 +35,7 @@ const CategoryThree = ({
       ]}
     >
       <Image
-        source={{ uri: productDetailData.images?.[0] ? `https://homeservices.unitdtechnologies.com/storage/uploads/${productDetailData.images[0]}` : null }}
+        source={{ uri: productDetailData.images?.[0] ? `https://homeservices.unitdtechnologies.com/storage/uploads/${productDetailData.images}` : null }}
         resizeMode={"cover"}
         borderRadius={6}
         style={styles.imageBackground}
@@ -55,7 +55,8 @@ const CategoryThree = ({
           >
             {discountTotalAmount}
           </Text>
-
+          
+          { productDetailData.discount_percentage !== null &&
           <Text
             style={{
               color: theme.secondry,
@@ -67,6 +68,7 @@ const CategoryThree = ({
           >
             {productDetailData.price}
           </Text>
+}
         </View>
         <Text
               numberOfLines={1}

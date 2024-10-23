@@ -320,7 +320,7 @@ const App = ({
   const [searchText, onChangeSearch] = useState("")
   const [data1, setData] = useState([])
  
-  console.log('searchText',searchText)
+ 
   useLayoutEffect(() => {
     // Fetch data from API
     api
@@ -353,18 +353,7 @@ const App = ({
   
     return filteredData;
   };
-//   const applyFilters = () => {
-//     let filteredData = [...data1]; // Ensure data1 is an array
-   
-//     if (searchText !== '') {
-//         filteredData = filteredData.filter(item => {
-//             console.log('item', item.title);
-//           item.title.toLowerCase().includes(searchText.toLowerCase());
-//         });
-//     }
 
-//     return filteredData;
-// };
  
   const filteredGallery = applyFilters(); 
 
@@ -425,15 +414,9 @@ const App = ({
   const [modalVisibleSortBy, setModalVisibleSortBy] = useState(false)
 
   const [productsCategoryList, setProductsCategoryList] = useState([
-    // { name: "Men", isSelected: false },
-    // { name: "Women", isSelected: false },
-    // { name: "T-Shirts", isSelected: false },
-    // { name: "Jackets", isSelected: false },
-    // { name: "Bags", isSelected: false },
-    // { name: "Posters", isSelected: false },
-    // { name: "Uncategorized", isSelected: false }
+    
   ])
-  console.log('productsCategoryList',productsCategoryList)
+ 
   useLayoutEffect(() => {
     api
       .get("/category/getAllCategory")
@@ -794,15 +777,15 @@ const App = ({
       </View>
 
       {/* //recent Label */}
-      {recentSearchLabel(theme, searchText, emptySearchListFun, reduxLang)}
+      {/* {recentSearchLabel(theme, searchText, emptySearchListFun, reduxLang)} */}
 
       {/* //recentTextArray */}
       {
-        <View style={styles.recentSearchArrayView}>
-          {recentTextArray.map((value, index) =>
-            recentText(theme, value, index, onChangeSearch)
-          )}
-        </View>
+        // <View style={styles.recentSearchArrayView}>
+        //   {recentTextArray.map((value, index) =>
+        //     recentText(theme, value, index, onChangeSearch)
+        //   )}
+        // </View>
       }
 
       <ScrollView

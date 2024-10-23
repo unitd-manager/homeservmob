@@ -29,6 +29,7 @@ import renderFooter from "../../components/renderFooter"
 import ThemeChangeIcon from "../../components/themeChangeIcon"
 import { useNavigation } from "@react-navigation/native"
 import api from "../../constants/api"
+import { useWishlist } from "../../context/WishlistContext"
 
 const App = ({ theme, reduxLang,textSize,icon }) => {
   
@@ -45,9 +46,7 @@ const App = ({ theme, reduxLang,textSize,icon }) => {
   const [compareItem, setCompareItem] = useState([])
   const [currentPage, setCurrentPage] = useState(1);
 
-  // console.log('dataWish',dataWish)
-  // console.log('compareItem',compareItem)
-
+  
  
 
   const getUser = async () => {
@@ -73,55 +72,42 @@ const App = ({ theme, reduxLang,textSize,icon }) => {
   };
 
   const contactId = user ? user.contact_id : null;
-
+const{addWishlistItem}=useWishlist();
 
   useEffect(() => {
     getUser();
   }, [contactId]);
-  // const Insert = (productId) => {
-  //   return api.post("/wishlist/add", { product_id: productId })
-  //     .then(response => {
-  //       console.log("Product inserted into wishlist successfully");
-  //       return response;
-  //     })
-  //     .catch(error => {
-  //       console.log("Error inserting product:", error);
-  //       throw error;
-  //     });
-  // };
-  
 
+  
+  const onPressSignIn = () => {
+    navigation.navigate("Login");
+  };
   const Insert = (item) => {
-    // if (contactId) {
-    //     Alert.alert('Please fill in all fields');
-    //     return;
-    // }
+    if (!contactId) {
+      Alert.alert(
+        'Please Login',
+        'You need to login to add items to the WhishList.',
+        [
+           {
+            text: 'Cancel',
+            style: 'cancel',
+          },
+          {
+            text: 'Login',
+            onPress: onPressSignIn,
+          },
+        ]
+      );
+        return;
+    }
     
     
     const wishData = {
         contact_id: user.contact_id,
         product_id:item, 
     };
-    
-    return api
-        .post('/contact/insertToWishlist', wishData)
-        .then(response => {
-            if (response.status === 200) {
-             
-              Alert.alert('Product Add to Wishlist');
-        return response;
-         
-
-            } else {
-                console.error('Error');
-            }
-        })
-        .catch(error => {
-          
-            console.error('Error:', error);
-        }
-
-        );
+    addWishlistItem(wishData)
+   
 
 };
 
@@ -131,9 +117,9 @@ const App = ({ theme, reduxLang,textSize,icon }) => {
 
   const getSliderDatas = () => {
     api
-      .post("/file/getListOfFiles", { record_id: 31, room_name: "menu" })
+      .get("/content/getBanners")
       .then(res => {
-        setSliderData(res.data)
+        setSliderData(res.data.data)
         
       })
       .catch(err => {

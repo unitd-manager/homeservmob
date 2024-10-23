@@ -1,6 +1,7 @@
 import React, { useState } from "react"
 import { StyleSheet, Text, View, TouchableOpacity, Image } from "react-native"
 import FontAwesome from "react-native-vector-icons/FontAwesome"
+import { HEADER_IOS_HEIGHT, HEADER_ANDROID_HEIGHT, } from "../../components/config"
 import ReviewStar from "../reviewStar"
 import { HEIGHT } from "../config"
 import { useNavigation } from "@react-navigation/native"
@@ -25,6 +26,23 @@ const CardOne = ({
     setaddtoCartModalVisible(!addtoCartmodalVisible);
     setUpdate(!update)
   }
+
+  const discount = data.discount_percentage ? parseFloat(data.discount_percentage) : 0;
+      // const price = parseFloat(price);
+      // console.log('price',price)
+      // Calculate the discount amount from the percentage
+      const discountAmount = (data.price * discount) / 100;
+  
+      // Price after applying the discount percentage
+      // const priceAfterDiscount = price - discountAmount;
+  
+      // Calculate total for the product and add to the running total
+    
+      const discountTotalAmount = (data.price - discountAmount);
+
+      const percentagesym = data.discount_percentage ? "%" : '';
+
+
   return (
     <View style={styles.container}>
       <View
@@ -105,19 +123,59 @@ const CardOne = ({
               <View />
             )}
           </View>
+          <View style={styles.priceRowInnerContainer}>
           <Text
             numberOfLines={1}
             style={[
               {
                 color: theme.textColor,
                 fontSize: theme.appFontSize.smallSize,
-                fontFamily: theme.appFontSize.fontFamily
+                fontFamily: theme.appFontSize.fontFamily,
+                width: "35%"
               }
             ]}
           >
-           Rs :{data.price}
+           Rs :{discountTotalAmount}
+   
           </Text>
+          { data.discount_percentage !==null &&
+          <Text
+            numberOfLines={1}
+            style={[
+              // styles.discountPriceText,
+              {
+                color:'red',
+                fontSize: theme.appFontSize.smallSize,
+                fontFamily: theme.appFontSize.fontFamily,
+                width: "20%",
+                textDecorationLine: "line-through",
+   
 
+    paddingBottom:
+      Platform.OS === "ios"
+        ? HEADER_IOS_HEIGHT * 0.05
+        : HEADER_ANDROID_HEIGHT * 0.04
+              }
+            ]}
+          >
+           {data.price}
+          </Text>
+  }  
+  { data.discount_percentage !==null &&
+          <Text
+              style={[
+               
+                {
+                  color:'green',
+                  fontSize: theme.appFontSize.mediumSize,
+                  fontFamily: theme.appFontSize.fontFamily
+                }
+              ]}
+            >
+              {data.discount_percentage}{percentagesym}
+            </Text>
+}
+          </View>
           <View style={styles.cartIconContainer}>
             <ReviewStar
               theme={theme}
@@ -177,6 +235,22 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 8,
     backgroundColor: "transparent"
   },
+  priceRowInnerContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingVertical: 0,
+   
+  },
+  discountPriceText: {
+    textDecorationLine: "line-through",
+    textAlign: "left",
+    paddingHorizontal: 10,
+    paddingBottom:
+      Platform.OS === "ios"
+        ? HEADER_IOS_HEIGHT * 0.05
+        : HEADER_ANDROID_HEIGHT * 0.04
+  },
+  
   productNameView: {
     marginHorizontal: 10,
     alignItems: "flex-start",

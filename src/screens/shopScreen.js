@@ -274,92 +274,12 @@ const App = ({
         console.log(err)
       })
   }, [])
-  // const [categories] = React.useState([
-  //   {
-  //     productName: reduxLang.DressShirt
-  //   },
-  //   {
-  //     productName: reduxLang.CubanCollarShirt
-  //   },
-  //   {
-  //     productName: reduxLang.PeterEnglandShirts
-  //   },
-  //   {
-  //     productName: reduxLang.ZodiacShirts
-  //   },
-  //   {
-  //     productName: reduxLang.ParxShirts
-  //   },
-  //   {
-  //     productName: reduxLang.ArrowShirts
-  //   },
-  //   {
-  //     productName: reduxLang.VanHeusenShirts
-  //   }
-  // ])
+  
  
   const [data, setdata] = useState(1)
-  let [datas, setdatas] = useState([
-    {
-      url: require("../images/shirtsTwo/CustomSize43.png"),
-      productName: reduxLang.DressShirt,
-      quantity: "120 " + reduxLang.Products
-    },
-    {
-      url: require("../images/shirtsTwo/CustomSize43.png"),
-      productName: reduxLang.CubanCollarShirt,
-      quantity: "650 " + reduxLang.Products
-    },
-    {
-      url: require("../images/shirtsTwo/CustomSize43.png"),
-      productName: reduxLang.Overshirt,
-      quantity: "432 " + reduxLang.Products
-    },
-    {
-      url: require("../images/shirtsTwo/CustomSize43.png"),
-      productName: reduxLang.FlannelShirt,
-      quantity: "678 " + reduxLang.Products
-    },
-    {
-      url: require("../images/shirtsTwo/CustomSize43.png"),
-      productName: reduxLang.OfficeShirt,
-      quantity: "789 " + reduxLang.Products
-    },
-    {
-      url: require("../images/shirtsTwo/CustomSize43.png"),
-      productName: reduxLang.Chambray,
-      quantity: "120 " + reduxLang.Products
-    },
-    {
-      url: require("../images/shirtsTwo/CustomSize43.png"),
-      productName: reduxLang.ClassicShortSleeveShirt,
-      quantity: "650 " + reduxLang.Products
-    },
-    {
-      url: require("../images/shirtsTwo/CustomSize43.png"),
-      productName: reduxLang.DenimShirt,
-      quantity: "432 " + reduxLang.Products
-    },
-    {
-      url: require("../images/shirtsTwo/CustomSize43.png"),
-      productName: reduxLang.LinenShirt,
-      quantity: "678 " + reduxLang.Products
-    },
-    {
-      url: require("../images/shirtsTwo/CustomSize43.png"),
-      productName: reduxLang.Chambray,
-      quantity: "678 " + reduxLang.Products
-    }
-  ])
 
-  ///////
-  
-   
-
-
-  
   const categoryTitle =(categoryId)=>{
-    console.log('categorieTitles',categoryId)
+  
  
 
     if(categoryId === '0'){
@@ -400,7 +320,7 @@ const App = ({
 
 
   useLayoutEffect(() => {
-    console.log('name',categoryIds)
+    
     categoryTitle(categoryIds)
   }, [])
   const [loader, setLoader] = useState(false)
@@ -425,22 +345,7 @@ const App = ({
     onEnDReachedCalledDuringMomentum = true
   }
 
-  // const handleLoadMore = () => {
-  //   if (data.length > 9) {
-  //     setFab(true)
-  //   }
-  //   if (data.length < 20) {
-  //     setLoader(true)
-  //     const delay = setInterval(function() {
-  //       setLoader(false)
-  //       let temp = data.concat(data)
-  //       setdata(temp)
-  //       clearInterval(delay)
-  //     }, 3000)
-  //   }
-  // }
-
-  /////
+  
 
   const [selectedTab, setSelectedTab] = React.useState(categoryIds)
 
@@ -838,8 +743,7 @@ const App = ({
                
                 categoryTitle(item.item.category_id)
                 if (selectedTab !== item.item.category_id) {
-                   console.log('categoryTitle',item.item.category_id)
-                  console.log('index',item.index)
+                  
                   setdata(data)
                   const delay = setInterval(function() {
                     // setdata(data)

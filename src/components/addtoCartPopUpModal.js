@@ -225,7 +225,7 @@ const Counter = ({
     } else {
       Alert.alert(
         'Please Login',
-        'You need to log in to add items to the cart.',
+        'You need to login to add items to the cart.',
         [
            {
             text: 'Cancel',

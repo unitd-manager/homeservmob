@@ -30,6 +30,8 @@ const ProductDetailScreen = ({ navigation, theme, reduxLang, route }) => {
   const [product, setProduct] = useState([])
 
   
+
+  
   // Header Settings
   useEffect(() => {
     navigation.setOptions({
@@ -79,7 +81,7 @@ const ProductDetailScreen = ({ navigation, theme, reduxLang, route }) => {
   const [data, setdata] = useState(productId)
   const [wiil, setWill] = useState(datas)
 
- 
+ console.log('image',data)
 
   const discount = data.discount_percentage ? parseFloat(data.discount_percentage) : 0;
   const discountAmount = (data.price * discount) / 100;
@@ -380,7 +382,7 @@ const ProductDetailScreen = ({ navigation, theme, reduxLang, route }) => {
             >
               
               <Image
-            source={{ uri: data?.images? `https://homeservices.unitdtechnologies.com/storage/uploads/${data.images[0]}` : null }}
+            source={{ uri: data?.images? `https://homeservices.unitdtechnologies.com/storage/uploads/${data.images}` : null }}
 
             resizeMode={"cover"}
             borderRadius={8}
@@ -788,7 +790,7 @@ const ProductDetailScreen = ({ navigation, theme, reduxLang, route }) => {
           >
             Rs :{discountTotalAmount}
           </Text>
-          { item.discount_percentage ===null &&
+          { item.discount_percentage !==null &&
           <Text
             numberOfLines={1}
             style={[

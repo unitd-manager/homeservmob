@@ -384,7 +384,7 @@ const SendEmail = () => {
         />
 
         <View style={styles.checkBoxContainer}>
-          <View style={styles.checkBoxView}>
+          {/* <View style={styles.checkBoxView}>
             <TouchableOpacity
               style={styles.forgotText}
               onPress={() => onChangeCheckBoxAccount(!checkBoxAccount)}
@@ -407,9 +407,9 @@ const SendEmail = () => {
                 {reduxLang.IwantToCreateAnAccount}
               </Text>
             </View>
-          </View>
+          </View> */}
 
-          <View style={styles.checkBoxView}>
+          {/* <View style={styles.checkBoxView}>
             <TouchableOpacity
               style={styles.forgotText}
               onPress={() => onChangeCheckBoxAgree(!checkBoxAgree)}
@@ -456,7 +456,7 @@ const SendEmail = () => {
                 </Text>
               </TouchableOpacity>
             </View>
-          </View>
+          </View> */}
         </View>
 
         <CustomBtn

@@ -1,5 +1,17 @@
 import React, { createContext, useReducer, useContext, useEffect } from 'react';
 import axios from 'axios';
+import {
+  SafeAreaView,
+  StyleSheet,
+  Text,
+  FlatList,
+  TouchableOpacity,
+  backgroundColor,
+  View,
+  Image,
+  Alert,
+  StatusBar
+} from "react-native"
 import api from '../constants/api';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -76,7 +88,14 @@ export const WishlistProvider = ({ children }) => {
   // Add item
   const addWishlistItem = async (item) => {
     try {
-      const response = await api.post('/contact/insertToWishlist', item); // Replace with your API endpoint
+      const response = await api.post('/contact/insertToWishlist', item); 
+      if (response.status === 200) {
+             
+                  Alert.alert('Product Add to Wishlist');
+            return response;
+             
+    
+                }// Replace with your API endpoint
       dispatch({ type: 'ADD_ITEM', payload: response.data.data });
     } catch (error) {
       console.error('Error adding item:', error);

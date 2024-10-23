@@ -26,7 +26,7 @@ const App = ({ navigation, theme, reduxLang, route }) => {
   const [gridView, setGridView] = useState(true);
   const scrollRef = useRef(null);
 
-const{fetchAllWishlistItems,wishlist}=useWishlist()
+const{fetchAllWishlistItems,removeWishlistItem,wishlist}=useWishlist()
 
   // Fetch data from API
   useEffect(() => {
@@ -96,7 +96,7 @@ console.log('wishlist',wishlist);
       >
         {reduxLang.RemoveAll}
       </Text>
-      <TouchableOpacity onPress={clearAll()}>
+      <TouchableOpacity onPress={()=>clearAll}>
         <FontAwesome
           style={{
             color: theme.secondry,

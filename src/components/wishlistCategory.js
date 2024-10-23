@@ -18,6 +18,7 @@ import { HEIGHT } from "./config"
 import { useNavigation } from "@react-navigation/native"
 import api from "../constants/api"
 import AsyncStorage from "@react-native-async-storage/async-storage"
+import { useWishlist } from "../context/WishlistContext"
 const App = ({
   theme,
   reduxLang,
@@ -30,7 +31,7 @@ const App = ({
   const [data, setData] = useState([])
   
   console.log('daaa',data)
- 
+ const{wishlist}=useWishlist();
 
   const fetchProductData = async() => {
     const userData = await AsyncStorage.getItem('USER');
@@ -71,7 +72,7 @@ const App = ({
     >
       <AddtoCartPopUpModal
         theme={theme}
-        productDetailData={data}
+        productDetailData={wishlist}
         reduxLang={reduxLang}
         addtoCartmodalVisible={addtoCartmodalVisible}
         setaddtoCartModalVisible={setaddtoCartModalVisible}
@@ -93,7 +94,7 @@ const App = ({
         <TouchableOpacity
           onPress={() =>
             navigation.navigate("Wishlist", {
-              dataImages: data
+              dataImages: wishlist
             })
           }
           style={styles.rowTag}
@@ -126,11 +127,11 @@ const App = ({
       <FlatList
         horizontal
         keyExtractor={(item, index) => index.toString()}
-        data={data}
+        data={wishlist}
         showsHorizontalScrollIndicator={false}
         renderItem={({ item }) => (
           <TouchableOpacity
-            onPress={() => navigation.push("ProductDetail", { productId: item, datas: data })}
+            onPress={() => navigation.push("ProductDetail", { productId: item, datas: wishlist })}
             style={styles.touchableOpacity}
           >
             <Image
