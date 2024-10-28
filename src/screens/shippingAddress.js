@@ -93,9 +93,8 @@ const labelViewFun = (
 
 const AddAddressScreen = ({ navigation, theme, reduxLang, route }) => {
   /////////////////// Header Settings
-  const { total,datas,percentage,subTotal } = route.params;
-  console.log('total',total)
-  console.log('datas',datas)
+  const { total,datas,percentage,subTotal,totalAmount,gst,igst } = route.params;
+  
   useLayoutEffect(() => {
     navigation.setOptions({
       headerTitle: reduxLang.ShippingAddress,
@@ -567,7 +566,7 @@ const AddAddressScreen = ({ navigation, theme, reduxLang, route }) => {
             onPressFun={() => {
               if (validation()) {
                 navigation.navigate("ShippingMethod", {
-                  total: total,datas:datas,subTotal:subTotal,percentage:percentage,firstName:firstName,address:address,email:email,phone:phone,pincode:pincode,city:city,statesName:statesName,country:country,lastName:lastName
+                  total: total,gst:gst,igst:igst,totalAmount:totalAmount, datas:datas,subTotal:subTotal,percentage:percentage,firstName:firstName,address:address,email:email,phone:phone,pincode:pincode,city:city,statesName:statesName,country:country,lastName:lastName
                 })
     }
              

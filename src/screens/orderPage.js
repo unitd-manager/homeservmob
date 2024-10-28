@@ -23,7 +23,7 @@ import RazorpayCheckout from 'react-native-razorpay';
 const OrderPage = ({ navigation, theme, reduxLang, route }) => {
   /////////////////// Header Settings
 
-  const { total,datas,subTotal,percentage,firstName,address,email,phone,pincode,city,statesName,country,lastName } = route.params;
+  const { total,datas,subTotal,shippingData,gst,igst,totalAmount,percentage,firstName,address,email,phone,pincode,city,statesName,country,lastName } = route.params;
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -113,7 +113,7 @@ const OrderPage = ({ navigation, theme, reduxLang, route }) => {
     const city = city;
     const state = statesName;
     const Country =country;
-    const TotalAmount = total;
+    const TotalAmount = totalAmount;
     const code = pincode;
 
     api
@@ -140,6 +140,7 @@ const OrderPage = ({ navigation, theme, reduxLang, route }) => {
             }
         });
 };
+
   const addDeliveryAddress = async () => {
     if (!userContactId) {
       Alert.alert('User information not found.');
@@ -166,14 +167,18 @@ const OrderPage = ({ navigation, theme, reduxLang, route }) => {
         const orderId = response.data.data.insertId;
   
         // Insert each order item one by one
+
+       
         const orderItemsPromises = cart.map(item => {
-          console.log('productID',item.product_id)
+          console.log('productID',item.title)
           return api.post('/orders/insertOrderItem', {
             qty: item.qty,
             unit_price: item.price,
             contact_id: userContactId,
             order_id: orderId,
-            product_id: item.product_id
+            product_id: item.product_id,
+            item_title:item.title,
+            discount_percentage:item.discount_percentage
           });
         });
   
@@ -312,7 +317,7 @@ const OrderPage = ({ navigation, theme, reduxLang, route }) => {
 
   const onPaymentPress = async () => {
 
-    const amountInPaise = total * 100;
+    const amountInPaise = totalAmount * 100;
     console.log('amountInPaise',amountInPaise)
     const options = {
       description: 'Purchase Description',
@@ -434,11 +439,13 @@ const OrderPage = ({ navigation, theme, reduxLang, route }) => {
             }
           ]}
         >
-          {textRow(reduxLang.SubTotal, `Rs:${subTotal}`)}
-          {textRow(reduxLang.Shipping, "0.00")}
-          {textRow(reduxLang.Tax, "0.00")}
-          {textRow(reduxLang.Discount, percentage)}
-          {textRow(reduxLang.Total, `Rs:${total}`, true)}
+          {textRow(reduxLang.SubTotal, `Rs:${subTotal}`,true)}
+          {textRow(reduxLang.Discount, percentage,true)}
+          {textRow('Total Amount', `Rs:${total}`, true)}
+          {textRow('GST 9%', `${gst}`)}
+          {textRow('IGST 9%', `${igst}`)}
+          {/* {textRow(reduxLang.Shipping, "0.00")} */}
+          {textRow(reduxLang.Total, `Rs:${totalAmount}`,true)}
         </View>
 
         {headingText(reduxLang.OrderNote)}

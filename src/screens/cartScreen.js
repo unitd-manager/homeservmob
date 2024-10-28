@@ -172,7 +172,7 @@ const App = ({ navigation, theme, reduxLang,route }) => {
     }, 0).toFixed(2);
   };
   const calculatepercentageTotals = () => {
-    return cart.reduce((total, product) => {
+    const percentageTotals = cart.reduce((total, product) => {
       const discount = product.discount_percentage ? parseFloat(product.discount_percentage) : 0;
       const price = parseFloat(product.price);
       
@@ -183,12 +183,38 @@ const App = ({ navigation, theme, reduxLang,route }) => {
       const priceAfterDiscount = price - discountAmount;
   
       // Calculate total for the product and add to the running total
-      return total + (priceAfterDiscount * parseFloat(product.qty));
-    }, 0).toFixed(2);
+      return total + (priceAfterDiscount * parseFloat(product.qty)||0);
+    }, 0);
+    return percentageTotals === 0 ? "0.00" : percentageTotals.toFixed(2);
   };
+  const calculatepercentageTotalAmount = () => {
+    const percentageTotalAmount= cart.reduce((total, product) => {
+      const discount = product.discount_percentage ? parseFloat(product.discount_percentage) : 0;
+      const price = parseFloat(product.price);
+
+      const gst = 18
+    
+      // Calculate the discount amount from the percentage
+      const discountAmount = (price * discount) / 100;
   
+      // Price after applying the discount percentage
+      const priceAfterDiscount = price - discountAmount;
+
+      const Totalamount =   priceAfterDiscount * parseFloat(product.qty)
+      
+      const gstAmount = (Totalamount * gst) / 100;
+       
+      const TotalWithGst = Totalamount + gstAmount
+  
+      // Calculate total for the product and add to the running total
+      return total + (TotalWithGst)||0;
+    }, 0);
+
+    return percentageTotalAmount === 0 ? "0.00" : percentageTotalAmount.toFixed(2);
+  };
+
   const calculatepercentageTotal = () => {
-    return cart.reduce((total, product) => {
+    const percentage= cart.reduce((total, product) => {
       const discount = product.discount_percentage ? parseFloat(product.discount_percentage) : 0;
       const price = parseFloat(product.price);
       
@@ -199,16 +225,63 @@ const App = ({ navigation, theme, reduxLang,route }) => {
       // const priceAfterDiscount = price - discountAmount;
   
       // Calculate total for the product and add to the running total
-      return total + (discountAmount * parseFloat(product.qty));
-    }, 0).toFixed(2);
+      return total + (discountAmount * parseFloat(product.qty)||0);
+    }, 0);
+    return percentage === 0 ? "0.00" : percentage.toFixed(2);
   };
   
   const calculateSubTotal = () => {
-    return cart.reduce((total, product) => {
-     
-      return total + (parseFloat(product.price) * parseFloat(product.qty));
-    }, 0).toFixed(2);
-  };  
+    const subtotal = cart.reduce((total, product) => {
+      return total + (parseFloat(product.price) * parseFloat(product.qty) || 0);
+    }, 0);
+    
+    return subtotal === 0 ? "0.00" : subtotal.toFixed(2);
+  };
+  
+
+
+  const calculateGstpercentageTotal = () => {
+    const GstpercentageTotal = cart.reduce((total, product) => {
+
+      const gst = '9' 
+      const discount = product.discount_percentage ? parseFloat(product.discount_percentage) : 0;
+      const price = parseFloat(product.price);
+      
+      // Calculate the discount amount from the percentage
+      const discountAmount = (price * discount) / 100;
+  
+      // Price after applying the discount percentage
+      const priceAfterDiscount = price - discountAmount;
+
+      const gstAmount = (priceAfterDiscount * gst) / 100;
+  
+      // Calculate total for the product and add to the running total
+      return total + (gstAmount * parseFloat(product.qty)||0);
+    }, 0);
+    return GstpercentageTotal === 0 ? "0.00" : GstpercentageTotal.toFixed(2);
+  };
+  
+  const calculateIGstpercentageTotal = () => {
+    const IGstpercentageTotal= cart.reduce((total, product) => {
+
+      const gst = '9' 
+      const discount = product.discount_percentage ? parseFloat(product.discount_percentage) : 0;
+      const price = parseFloat(product.price);
+      
+      // Calculate the discount amount from the percentage
+      const discountAmount = (price * discount) / 100;
+  
+      // Price after applying the discount percentage
+      const priceAfterDiscount = price - discountAmount;
+
+      const gstAmount = (priceAfterDiscount * gst) / 100;
+  
+      // Calculate total for the product and add to the running total
+      return total + (gstAmount * parseFloat(product.qty)||0);
+    }, 0);
+    return IGstpercentageTotal === 0 ? "0.00" : IGstpercentageTotal.toFixed(2);
+  };
+ 
   const calculateDicountTotal = () => {
     return cart.reduce((total, product) => {
       return total + (parseFloat(product.discount_amount));
@@ -301,14 +374,15 @@ const App = ({ navigation, theme, reduxLang,route }) => {
             backgroundColor: theme.secondryBackgroundColor
           }}
         >
-          {textRow(reduxLang.SubTotal, `Rs :${calculateSubTotal()}`, true)}
+          {textRow(reduxLang.SubTotal, `Rs :${calculateSubTotal()}`?`Rs :${calculateSubTotal()}`:'', true)}
           {/* {textRow(reduxLang.Shipping, "$0.00")} */}
           
-          {/* {textRow(reduxLang.Tax,`Rs :${calculatepercentageTotal()}`, true)} */}
-
           {textRow(reduxLang.Discount,  `Rs :${calculatepercentageTotal()}`, true)}
           <View style={{ marginVertical: 2 }} />
-          {textRow(reduxLang.Total,  `Rs :${calculatepercentageTotals()}`, true)}
+          {textRow('Total Amount',  `Rs :${calculatepercentageTotals()}`, true)}
+          {textRow( 'GST  9%', `${calculateGstpercentageTotal()}`, false)}
+          {textRow( 'IGST 9%', `${calculateIGstpercentageTotal()}`, false)}
+          {textRow( reduxLang.Total,`Rs :${calculatepercentageTotalAmount()}`, true)}
         </View>
 
         <View
@@ -321,7 +395,7 @@ const App = ({ navigation, theme, reduxLang,route }) => {
           { userContactId !== null && cart.length !== 0 &&
           <CustomBtn
             onPressFun={() => {
-              navigation.navigate("ShippingAddress",{datas:cart,total:calculatepercentageTotals(),percentage:calculatepercentageTotal(),subTotal:calculateSubTotal()})
+              navigation.navigate("ShippingAddress",{datas:cart,totalAmount:calculatepercentageTotalAmount(),gst:calculateGstpercentageTotal(),igst:calculateIGstpercentageTotal(),total:calculatepercentageTotals(),percentage:calculatepercentageTotal(),subTotal:calculateSubTotal()})
             }}
             theme={theme}
             bold={true}

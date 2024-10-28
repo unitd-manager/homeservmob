@@ -1,4 +1,4 @@
-import React, { useLayoutEffect } from "react"
+import React, { useLayoutEffect,useEffect } from "react"
 import {
   SafeAreaView,
   StyleSheet,
@@ -8,14 +8,17 @@ import {
   TextInput,
   KeyboardAvoidingView,
   ScrollView,
-  I18nManager
+  I18nManager,
+  Alert,
 } from "react-native"
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { connect } from "react-redux"
 import CustomBtn from "../components/customBtn"
+import api from "../constants/api";
 
 const App = ({ navigation, theme, reduxLang,route }) => {
   console.log('route',route)
-  const { userName } = route
+  const { userName } = route.params
   console.log('userName',userName)
   // Header Settings
   useLayoutEffect(() => {
@@ -33,12 +36,91 @@ const App = ({ navigation, theme, reduxLang,route }) => {
     theme.secondryBackgroundColor,
     theme.textColor
   ])
+  const [name, onChangeName] = React.useState('')
+  const [email, onChangeEmail] = React.useState('')
+  const [phone, onChangePhone] = React.useState('')
+  const [address, onChangeAddress] = React.useState('')
+  const [state, onChangeState] = React.useState('')
+  const [userContactId, setUserContactId] = React.useState(null);
+  
+  useEffect(() => {
+    const getUserCart = async () => {
+      try {
+        const userData = await AsyncStorage.getItem('USER');
+        const user = JSON.parse(userData);
 
-  const [name, onChangeName] = React.useState("")
-  const [email, onChangeEmail] = React.useState("")
-  const [phone, onChangePhone] = React.useState("")
+        if (!user?.contact_id) {
+          Alert.alert('Please Login');
+          navigation.navigate('Settings');
+          return;
+        }
+        setUserContactId(user?.contact_id || null);
+        api
+          .post('/contact/getContactsById', {
+            contact_id: user?.contact_id || null,
+          })
+          .then(res => {
+            const contactCri = res.data.data;
+
+            onChangeEmail(contactCri[0].email);
+            onChangePhone(contactCri[0].mobile);
+            onChangeName(contactCri[0].first_name);
+            onChangeAddress(contactCri[0].address2);
+            onChangeState(contactCri[0].address_state); 
+          });
+      } catch (error) {
+        console.error('Error fetching cart:', error);
+      }
+    };
+
+    getUserCart();
+  }, []);
+
+  const addDeliveryAddress = () => {
+    // Validate fields
+    if (!name) {
+      Alert.alert('Please enter your first name.');
+      return;
+    }
+    if (!email) {
+      Alert.alert('Please enter your email.');
+      return;
+    }
+    if (!phone) {
+      Alert.alert('Please enter your mobile number.');
+      return;
+    }
+
+    const contactUser = {
+      first_name: name,
+      email: email,
+      mobile: phone,
+      contact_id: userContactId || null,
+      address2: address,
+      address_state: state,
+      // address_country_code: name?.address_country_code,
+    };
+ 
+    // Proceed with adding delivery address
+    api
+      .post('/contact/editContactProfile', contactUser)
+      .then(res => {
+        if(res.data.msg === 'Success'){
+        Alert.alert('Profile Save successfully.');
+        }else{
+          console.error('issue');
+        }
+      })
+      .catch(error => {
+        console.error('Error:', error);
+      });
+  };
+
+ 
   let secondTextInput = ""
   let thirdTextInput = ""
+
+
 
   return (
     <SafeAreaView
@@ -87,7 +169,7 @@ const App = ({ navigation, theme, reduxLang,route }) => {
                 }
               ]}
             >
-              DrMarkWhite@gmail.co
+              {email}
             </Text>
           </View>
 
@@ -111,29 +193,32 @@ const App = ({ navigation, theme, reduxLang,route }) => {
             blurOnSubmit={false}
           />
 
-          <TextInput
-            style={[
-              styles.textInput,
-              {
-                backgroundColor: theme.secondryBackgroundColor,
-                color: theme.textColor,
-                fontSize: theme.appFontSize.mediumSize,
-                fontFamily: theme.appFontSize.fontFamily
-              }
-            ]}
-            keyboardType={"email-address"}
-            onChangeText={text => onChangeEmail(text)}
-            placeholder={reduxLang.Email}
-            placeholderTextColor={"gray"}
-            value={email}
-            ref={input => {
-              secondTextInput = input
-            }}
-            onSubmitEditing={() => {
-              thirdTextInput.focus()
-            }}
-            blurOnSubmit={false}
-          />
+<TextInput
+  style={[
+    styles.textInput,
+    {
+      backgroundColor: theme.secondryBackgroundColor,
+      color: theme.textColor,
+      fontSize: theme.appFontSize.mediumSize,
+      fontFamily: theme.appFontSize.fontFamily,
+      borderColor: email ? 'transparent' : 'red', // Red border if the email field is empty
+      borderWidth: email ? 0 : 1 // Set border width only when the email field is empty
+    }
+  ]}
+  keyboardType={"email-address"}
+  onChangeText={text => onChangeEmail(text)}
+  placeholder={reduxLang.Email}
+  placeholderTextColor={"gray"}
+  editable={!email} // Disable input when `disable` is true
+  value={email}
+  ref={input => {
+    secondTextInput = input
+  }}
+  onSubmitEditing={() => {
+    thirdTextInput.focus()
+  }}
+  blurOnSubmit={false}
+/>
 
           <TextInput
             style={[
@@ -155,9 +240,47 @@ const App = ({ navigation, theme, reduxLang,route }) => {
               thirdTextInput = input
             }}
           />
+            <TextInput
+            style={[
+              styles.textInput,
+              {
+                backgroundColor: theme.secondryBackgroundColor,
+                color: theme.textColor,
+                fontSize: theme.appFontSize.mediumSize,
+                fontFamily: theme.appFontSize.fontFamily
+              }
+            ]}
+            onChangeText={text => onChangeAddress(text)}
+            placeholder={'Address'}
+            placeholderTextColor={"gray"}
+            value={address}
+            onSubmitEditing={() => {
+              secondTextInput.focus()
+            }}
+            blurOnSubmit={false}
+          />
+           <TextInput
+            style={[
+              styles.textInput,
+              {
+                backgroundColor: theme.secondryBackgroundColor,
+                color: theme.textColor,
+                fontSize: theme.appFontSize.mediumSize,
+                fontFamily: theme.appFontSize.fontFamily
+              }
+            ]}
+            onChangeText={text => onChangeState(text)}
+            placeholder={'State'}
+            placeholderTextColor={"gray"}
+            value={state}
+            onSubmitEditing={() => {
+              secondTextInput.focus()
+            }}
+            blurOnSubmit={false}
+          />
 
           <CustomBtn
-            onPressFun={() => {}}
+            onPressFun={() => {addDeliveryAddress()}}
             theme={theme}
             title={reduxLang.Save}
           ></CustomBtn>

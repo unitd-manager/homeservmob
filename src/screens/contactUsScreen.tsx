@@ -7,6 +7,7 @@ import {
   KeyboardAvoidingView,
   ScrollView,
   I18nManager,
+  Alert,
 } from 'react-native';
 import { connect } from 'react-redux';
 import { StackNavigationProp } from '@react-navigation/stack';
@@ -46,16 +47,44 @@ const App = ({ navigation, theme, reduxLang }: IProps) => {
   const [phone, onChangePhone] = React.useState('');
   let secondTextInput: any = '';
   let thirdTextInput: any = '';
-  console.log('name',name);
-  console.log('mail',email);
-  console.log('comments',phone);
+
+  const onPressContact = () => {
+    navigation.navigate('Settings');
+  };
+
 const createEnquiry=()=>{
+  if (!name) {
+    Alert.alert('User name information not found.');
+    return;
+  }
+  if (!email) {
+    Alert.alert('User email information not found.');
+    return;
+  }
+  if (!phone) {
+    Alert.alert('User comment information not found.');
+    return;
+  }
   api
       .post("/enquiry/insertEnquiry", {
        email,first_name:name,comments:phone
       })
       .then(res => {
-        console.log('res',res)
+          Alert.alert(
+            'Contact saved successfully',
+            'Thank you for contacting us. Your inquiry has been successfully registered.',
+            [
+               {
+                text: 'Cancel',
+                style: 'cancel',
+              },
+              {
+                text: 'ok',
+                onPress: onPressContact,
+              },
+            ]
+          );
+          
       })
       .catch(err => {
         console.log(err)

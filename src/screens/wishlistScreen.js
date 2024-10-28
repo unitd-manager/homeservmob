@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   View,
   Text,
+  Alert,
 } from "react-native";
 import { connect } from "react-redux";
 import AddtoCartPopUpModal from "../components/addtoCartPopUpModal";
@@ -26,7 +27,7 @@ const App = ({ navigation, theme, reduxLang, route }) => {
   const [gridView, setGridView] = useState(true);
   const scrollRef = useRef(null);
 
-const{fetchAllWishlistItems,removeWishlistItem,wishlist}=useWishlist()
+const{fetchAllWishlistItems,removeWishlistItem,removeWishlistItemContact,wishlist}=useWishlist()
 
   // Fetch data from API
   useEffect(() => {
@@ -64,27 +65,98 @@ const{fetchAllWishlistItems,removeWishlistItem,wishlist}=useWishlist()
     });
   }, [navigation, reduxLang, theme]);
 
-  const handleDelete = async (id) => {
-    api
-    .post("/contact/deleteWishlistItem",{wish_list_id:id})
-    .then(res => {      
-      console.log('wishlists',res.data.data)
-    })
-    .catch(err => {
-      console.log(err)
-    })
+  const colorfulAlert = (title, message, buttons) => {
+    if (Platform.OS === 'ios') {
+      Alert.alert(title, message, buttons);
+    } else {
+      Alert.alert(
+        title,
+        message,
+        buttons,
+        {
+          cancelable: false,
+          style: 'colorful' // Apply custom style
+        }
+      );
+    }
   };
-console.log('wishlist',wishlist);
-  const clearAll = async () => {
-    api
-    .post("/contact/clearWishlistItems",{contact_id:userData.contact_id})
-    .then(res => {      
-      console.log('wishlists',res.data.data)
-    })
-    .catch(err => {
-      console.log(err)
-    })
+  const handleDelete = (item) => {
+    colorfulAlert(
+      'Confirm Removal',
+      'Are you sure you want to remove this item from the WishList?',
+      [
+        {
+          text: 'Cancel',
+          style: 'cancel',
+        },
+        {
+          text: 'Remove',
+          onPress: () => removeWishlistItem(item),
+          style: 'destructive' // Make the button red for emphasis
+        },
+      ]
+    );
   };
+
+
+  // const handleDelete = async (item) => {
+  //   // api
+  //   // .post("/contact/deleteWishlistItem",{wish_list_id:id})
+  //   // .then(res => {      
+  //   //   console.log('wishlists',res.data.data)
+  //   // })
+  //   // .catch(err => {
+  //   //   console.log(err)
+    
+  //   // })
+  //   removeWishlistItem(item);
+  // };
+
+
+  const colorfulAlerts = (title, message, buttons) => {
+    if (Platform.OS === 'ios') {
+      Alert.alert(title, message, buttons);
+    } else {
+      Alert.alert(
+        title,
+        message,
+        buttons,
+        {
+          cancelable: false,
+          style: 'colorful' // Apply custom style
+        }
+      );
+    }
+  };
+  const clearAll = () => {
+    colorfulAlerts(
+      'Confirm Removal',
+      'Are you sure you want to remove All this item from the WishList?',
+      [
+        {
+          text: 'Cancel',
+          style: 'cancel',
+        },
+        {
+          text: 'Remove',
+          onPress: () =>   removeWishlistItemContact(userData),
+          style: 'destructive' // Make the button red for emphasis
+        },
+      ]
+    );
+  };
+
+  // const clearAll = async () => {
+  //   // api
+  //   // .post("/contact/clearWishlistItems",{contact_id:userData.contact_id})
+  //   // .then(res => {      
+  //   //   console.log('wishlists',res.data.data)
+  //   // })
+  //   // .catch(err => {
+  //   //   console.log(err)
+  //   // })
+  //   removeWishlistItemContact(userData)
+  // };
 
   const deleteLabel = () => (
     <View style={styles.deleteTextView}>
@@ -96,7 +168,7 @@ console.log('wishlist',wishlist);
       >
         {reduxLang.RemoveAll}
       </Text>
-      <TouchableOpacity onPress={()=>clearAll}>
+      <TouchableOpacity onPress={()=>clearAll()}>
         <FontAwesome
           style={{
             color: theme.secondry,
@@ -161,14 +233,14 @@ console.log('wishlist',wishlist);
         legacyImplementation={true}
         maxToRenderPerBatch={10}
         updateCellsBatchingPeriod={10}
-        keyExtractor={(item) => item?.id?.toString()} // Adjust according to your data structure
+        keyExtractor={(item) => item?.wish_list_id?.toString()} // Adjust according to your data structure
         data={wishlist}
         renderItem={({ item }) =>
           !gridView ? (
             <SearchListCard
               icon={"trash"}
               data={item}
-              handleDelete={()=>handleDelete()} // Pass delete function to child component if needed
+              handleDelete={()=>handleDelete(item)} // Pass delete function to child component if needed
               reduxLang={reduxLang}
               theme={theme}
             />
@@ -179,7 +251,7 @@ console.log('wishlist',wishlist);
               reduxLang={reduxLang}
               theme={theme}
               addToCartFun={() => setaddtoCartModalVisible(!addtoCartmodalVisible)}
-              onDelete={() => handleDelete(item.wish_list_id)} // Call delete function
+              onDelete={() => handleDelete(item)} // Call delete function
             />
           )
         }

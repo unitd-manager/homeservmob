@@ -12,6 +12,7 @@ const CardOne = ({
   data,
   theme,
   // addToCartFun,
+  onDelete,
   reduxLang,
   backgroundColor,
   index,
@@ -28,15 +29,8 @@ const CardOne = ({
   }
 
   const discount = data.discount_percentage ? parseFloat(data.discount_percentage) : 0;
-      // const price = parseFloat(price);
-      // console.log('price',price)
-      // Calculate the discount amount from the percentage
+    
       const discountAmount = (data.price * discount) / 100;
-  
-      // Price after applying the discount percentage
-      // const priceAfterDiscount = price - discountAmount;
-  
-      // Calculate total for the product and add to the running total
     
       const discountTotalAmount = (data.price - discountAmount);
 
@@ -110,7 +104,9 @@ const CardOne = ({
             setUpdate={setUpdate}
       />
             {whishlistTrash ? (
-              <TouchableOpacity style={{ zIndex: 3 }}>
+              <TouchableOpacity  onPress={() =>
+                onDelete()
+              } style={{ zIndex: 3 }}>
                 <FontAwesome
                   style={{
                     color: theme.secondry,

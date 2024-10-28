@@ -23,21 +23,18 @@ const cartCard = ({ key, name, url, theme,priceNet,price,quantity,basketId,calcu
   useEffect(() => {
     getUser()
   }, []) 
-   console.log('priceNet',item)
+  
  
     const{removeItem}=useCart();
       const discount = priceNet ? parseFloat(priceNet) : 0;
-      // const price = parseFloat(price);
-      // console.log('price',price)
+      
       // Calculate the discount amount from the percentage
       const discountAmount = (price * discount) / 100;
   
-      // Price after applying the discount percentage
-      // const priceAfterDiscount = price - discountAmount;
   
       // Calculate total for the product and add to the running total
     
-      const discountTotalAmount = (price - discountAmount);
+      const discountTotalAmount = discountAmount?(price - discountAmount):'0';
 
       const percentagesym = priceNet ? "%" : '';
   

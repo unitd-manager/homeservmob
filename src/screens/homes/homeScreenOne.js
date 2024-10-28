@@ -72,12 +72,18 @@ const App = ({ theme, reduxLang,textSize,icon }) => {
   };
 
   const contactId = user ? user.contact_id : null;
-const{addWishlistItem}=useWishlist();
+const{addWishlistItem,wishlist,fetchAllWishlist}=useWishlist();
+console.log('wishlist',wishlist)
+
+// useEffect(() => {
+//   fetchAllWishlist(contactId);
+// }, [contactId]);
 
   useEffect(() => {
     getUser();
   }, [contactId]);
 
+  
   
   const onPressSignIn = () => {
     navigation.navigate("Login");
@@ -210,10 +216,7 @@ const{addWishlistItem}=useWishlist();
   }
 
 
-  useEffect(() => {
-    // Fetch data from API
-    
-  }, [])
+  
 
 
   useEffect(() => {
@@ -223,7 +226,7 @@ const{addWishlistItem}=useWishlist();
     getBestSellingProducts()
     getMostPopularProducts()
     getNewProducts()
-  }, [contactId]);
+  }, [contactId,currentPage]);
 
 
   const loadMoreQuestions = () => {
@@ -346,7 +349,13 @@ const{addWishlistItem}=useWishlist();
         renderItem={({ item, index }) => {
 
 
-         const reeeee = item.contactId === contactId
+//        const reeeee = item.contactId
+//        console.log('reeeee', reeeee);
+
+//          const hasMatchingContactId = wishlist.some(item => item.contact_id === reeeee);
+
+// console.log('Has matching contact_id:', hasMatchingContactId);
+
        
           const discount = item.discount_percentage ? parseFloat(item.discount_percentage) : 0;
           
@@ -538,7 +547,7 @@ const{addWishlistItem}=useWishlist();
   <FontAwesome
     style={{
       color:theme.secondry,
-      // color: reeeee === true ? 'red' : theme.secondry,
+    //  color: hasMatchingContactId === true ? 'red' : theme.secondry,
       fontSize: icon
         ? theme.appFontSize.largeSize
         : theme.appFontSize.mediumSize
