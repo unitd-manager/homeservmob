@@ -45,9 +45,6 @@ const OrderPage = ({ navigation, theme, reduxLang, route }) => {
   
   
   
- console.log('payStatus',payStatus)
- 
-
   const [paymentMethods, setpaymentMethods] = useState([
     // { value: reduxLang.Stripe, status: false, index: 0 },
     // { value: reduxLang.Paypal, status: true, index: 1 },
@@ -97,7 +94,7 @@ const OrderPage = ({ navigation, theme, reduxLang, route }) => {
     try {
       await api.post('/orders/deleteBasketContact', { contact_id: userContactId });
       await getUserCart();
-      Alert.alert('Orders deleted.');
+     
     } catch (error) {
       console.error('Error removing item:', error);
     }
@@ -133,8 +130,7 @@ const OrderPage = ({ navigation, theme, reduxLang, route }) => {
         })
         .then(response => {
             if (response.status === 200) {
-                Alert.alert('Orders Sent successfully on your mail.');
-                // navigation.navigate(StackNav.ProductList)
+              
             } else {
                 console.error('Error');
             }
@@ -145,6 +141,14 @@ const OrderPage = ({ navigation, theme, reduxLang, route }) => {
     if (!userContactId) {
       Alert.alert('User information not found.');
       return;
+    }
+
+    let paymentStatus =''
+    if(pay === 4){
+      paymentStatus='Paid'
+    
+    }else{
+      paymentStatus='not Paid'
     }
   
     try {
@@ -161,6 +165,7 @@ const OrderPage = ({ navigation, theme, reduxLang, route }) => {
         contact_id: userContactId,
          notes:phones,
          payment_method:payStatus,
+         order_status:paymentStatus,
       });
   
       if (response.status === 200) {
@@ -170,7 +175,7 @@ const OrderPage = ({ navigation, theme, reduxLang, route }) => {
 
        
         const orderItemsPromises = cart.map(item => {
-          console.log('productID',item.title)
+        
           return api.post('/orders/insertOrderItem', {
             qty: item.qty,
             unit_price: item.price,
@@ -190,8 +195,7 @@ const OrderPage = ({ navigation, theme, reduxLang, route }) => {
         if (allInserted) {
          
          
-          Alert.alert('Order placed successfully');
-          // navigation.navigate("ShippingMethod");
+    
         } else {
           console.error('Error placing one or more order items');
         }
@@ -337,8 +341,13 @@ const OrderPage = ({ navigation, theme, reduxLang, route }) => {
     try {
       const data = await RazorpayCheckout.open(options);
       console.log('Payment Successful:', data);
+      addDeliveryAddress()
+      SendEmail()
+      removeBacket()
+      navigation.navigate("ThankYouScreen");
     } catch (error) {
       console.error('Error:', error);
+      Alert.alert('Payment Error ');
     }
   };
 
@@ -480,10 +489,7 @@ const OrderPage = ({ navigation, theme, reduxLang, route }) => {
           onPressFun={() => {
             if(pay === 4){
               onPaymentPress()
-              addDeliveryAddress()
-              SendEmail()
-              removeBacket()
-              navigation.navigate("ThankYouScreen");
+            
             }else{
               addDeliveryAddress()
               SendEmail()

@@ -210,7 +210,7 @@ const App = ({ navigation, theme, reduxLang,route }) => {
       return total + (TotalWithGst)||0;
     }, 0);
 
-    return percentageTotalAmount === 0 ? "0.00" : percentageTotalAmount.toFixed(2);
+    return percentageTotalAmount === 0 ? "0.00" : Math.round(percentageTotalAmount).toFixed(2);
   };
 
   const calculatepercentageTotal = () => {
@@ -231,8 +231,9 @@ const App = ({ navigation, theme, reduxLang,route }) => {
   };
   
   const calculateSubTotal = () => {
+    
     const subtotal = cart.reduce((total, product) => {
-      return total + (parseFloat(product.price) * parseFloat(product.qty) || 0);
+      return total + (parseFloat(product.price) * parseFloat(product.qty) || 1);
     }, 0);
     
     return subtotal === 0 ? "0.00" : subtotal.toFixed(2);
@@ -380,7 +381,7 @@ const App = ({ navigation, theme, reduxLang,route }) => {
           {textRow(reduxLang.Discount,  `Rs :${calculatepercentageTotal()}`, true)}
           <View style={{ marginVertical: 2 }} />
           {textRow('Total Amount',  `Rs :${calculatepercentageTotals()}`, true)}
-          {textRow( 'GST  9%', `${calculateGstpercentageTotal()}`, false)}
+          {textRow( 'SGST  9%', `${calculateGstpercentageTotal()}`, false)}
           {textRow( 'IGST 9%', `${calculateIGstpercentageTotal()}`, false)}
           {textRow( reduxLang.Total,`Rs :${calculatepercentageTotalAmount()}`, true)}
         </View>

@@ -75,7 +75,7 @@ const App = ({ navigation, theme, reduxLang }) => {
     const registerData = {
         first_name: firstName,
         email: email,
-        password: pass,
+        pass_word: pass,
         mobile: phone,
         address1: address1,
         address2: address2,

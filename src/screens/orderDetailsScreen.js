@@ -71,7 +71,7 @@ const MyOrdersScreen = ({ navigation, theme, reduxLang, route }) => {
   const { orderNo } = route.params
 
   const [UserDetails, setUserDetails] = useState({});
-  console.log('orderNo',orderNo.order_id)
+ 
   const [userContactId, setUserContactId] = useState(null);
   const [orderItem, setOrderItem] = useState([]);
 

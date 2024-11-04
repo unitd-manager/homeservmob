@@ -19,7 +19,7 @@ const cartReducer = (state, action) => {
       return {
         ...state,
         items: state.items.map(item =>
-          item.id === action.payload.id ? { ...item, ...action.payload.updates } : item
+          item.basket_id === action.payload.basket_id ? { ...item, ...action.payload.updates } : item
         ),
       };
     case 'GET_ITEM_BY_ID':
@@ -41,7 +41,7 @@ export const CartProvider = ({ children }) => {
     const fetchCartItems = async (id) => {
       try {
         const response = await api.post('/orders/getBasket', { contact_id: id }); // Replace with your API endpoint
-        console.log('resp of fetchCartItems ',response.data.data);
+        
         dispatch({ type: 'SET_ITEMS', payload: response.data.data });
       } catch (error) {
         console.error('Error fetching cart items:', error);
@@ -55,7 +55,7 @@ export const CartProvider = ({ children }) => {
   const fetchAllCartItems = async (id) => {
     try {
       const response = await api.post('/orders/getBasket', { contact_id: id }); // Replace with your API endpoint
-     console.log('resp of fetchAllCartItems ',response.data.data);
+   
       dispatch({ type: 'SET_ITEMS', payload: response.data.data });
     } catch (error) {
       console.error('Error fetching cart items:', error);
@@ -84,8 +84,8 @@ export const CartProvider = ({ children }) => {
   // Update item
   const updateItem = async (updates) => {
     try {
-      const response = await api.put(`/orders/updateCartItem`, updates); // Replace with your API endpoint
-      dispatch({ type: 'UPDATE_ITEM', payload: { id, updates: response.data } });
+      const response = await api.post(`/orders/updateCartItem`, updates); // Replace with your API endpoint
+      dispatch({ type: 'UPDATE_ITEM', payload: { basket_id, updates: response.data } });
     } catch (error) {
       console.error('Error updating item:', error);
     }

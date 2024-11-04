@@ -45,7 +45,7 @@ const App = ({
           title: String(item.title).split(","),
           images: String(item.images).split(",")
         }));
-        console.log('wishlistdataincartpage',formattedData)
+        
         setData(formattedData);
       })
       .catch(error => {
@@ -135,7 +135,7 @@ const App = ({
             style={styles.touchableOpacity}
           >
             <Image
-              source={{ uri: item.images[0] ? `https://homeservices.unitdtechnologies.com/storage/uploads/${item.images[0]}` : null }}
+              source={{ uri: item.images ? `https://homeservices.unitdtechnologies.com/storage/uploads/${item.images}` : null }}
               resizeMode="cover"
               borderRadius={8}
               style={[styles.imageBackground, { backgroundColor: backgroundColor || theme.backgroundImageColor }]}

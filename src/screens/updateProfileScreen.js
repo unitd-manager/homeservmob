@@ -17,7 +17,7 @@ import CustomBtn from "../components/customBtn"
 import api from "../constants/api";
 
 const App = ({ navigation, theme, reduxLang,route }) => {
-  console.log('route',route)
+ 
   const { userName } = route.params
   console.log('userName',userName)
   // Header Settings
@@ -39,6 +39,7 @@ const App = ({ navigation, theme, reduxLang,route }) => {
   const [name, onChangeName] = React.useState('')
   const [email, onChangeEmail] = React.useState('')
   const [phone, onChangePhone] = React.useState('')
+  const [address1, onChangeAddress1] = React.useState('')
   const [address, onChangeAddress] = React.useState('')
   const [state, onChangeState] = React.useState('')
   const [userContactId, setUserContactId] = React.useState(null);
@@ -65,6 +66,7 @@ const App = ({ navigation, theme, reduxLang,route }) => {
             onChangeEmail(contactCri[0].email);
             onChangePhone(contactCri[0].mobile);
             onChangeName(contactCri[0].first_name);
+            onChangeAddress1(contactCri[0].address1);
             onChangeAddress(contactCri[0].address2);
             onChangeState(contactCri[0].address_state); 
           });
@@ -96,6 +98,7 @@ const App = ({ navigation, theme, reduxLang,route }) => {
       email: email,
       mobile: phone,
       contact_id: userContactId || null,
+      address1: address1,
       address2: address,
       address_state: state,
       // address_country_code: name?.address_country_code,
@@ -157,7 +160,7 @@ const App = ({ navigation, theme, reduxLang,route }) => {
                 }
               ]}
             >
-              {userName}
+              {name}
             </Text>
             <Text
               style={[
@@ -186,6 +189,7 @@ const App = ({ navigation, theme, reduxLang,route }) => {
             onChangeText={text => onChangeName(text)}
             placeholder={reduxLang.Name}
             placeholderTextColor={"gray"}
+            editable={!name}
             value={name}
             onSubmitEditing={() => {
               secondTextInput.focus()
@@ -239,6 +243,25 @@ const App = ({ navigation, theme, reduxLang,route }) => {
             ref={input => {
               thirdTextInput = input
             }}
+          />
+           <TextInput
+            style={[
+              styles.textInput,
+              {
+                backgroundColor: theme.secondryBackgroundColor,
+                color: theme.textColor,
+                fontSize: theme.appFontSize.mediumSize,
+                fontFamily: theme.appFontSize.fontFamily
+              }
+            ]}
+            onChangeText={text => onChangeAddress1(text)}
+            placeholder={'Address'}
+            placeholderTextColor={"gray"}
+            value={address1}
+            onSubmitEditing={() => {
+              secondTextInput.focus()
+            }}
+            blurOnSubmit={false}
           />
             <TextInput
             style={[

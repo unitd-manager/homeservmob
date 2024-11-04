@@ -24,6 +24,8 @@ const cartCard = ({ key, name, url, theme,priceNet,price,quantity,basketId,calcu
     getUser()
   }, []) 
   
+  
+ 
  
     const{removeItem}=useCart();
       const discount = priceNet ? parseFloat(priceNet) : 0;
@@ -34,15 +36,28 @@ const cartCard = ({ key, name, url, theme,priceNet,price,quantity,basketId,calcu
   
       // Calculate total for the product and add to the running total
     
-      const discountTotalAmount = discountAmount?(price - discountAmount):'0';
+      const discountTotalAmount = (price - discountAmount);
 
       const percentagesym = priceNet ? "%" : '';
+
+      const quantityNum = parseInt(quantity)||1 ;
+      
   
-  const [quantitys, setQuantity] = useState(quantity); // Assuming initial quantity is 1
+  const [quantitys, setQuantity] = useState(quantityNum); // Assuming initial quantity is 1
  
+
+//   const [quantitys, setQuantity] = useState(parseInt(quantity) || 1); 
+
+// useEffect(() => {
+//   setQuantity(parseInt(quantity) || 1);
+// }, [quantity]);
+
+// console.log('quantitys', quantitys);
+
     const handleQuantityChange = (text) => {
    // Convert text to number
     const newQuantity = parseInt(text, 10) || 0;
+    
     // Update the quantity state
     setQuantity(newQuantity);
     // Pass the updated quantity to the parent component

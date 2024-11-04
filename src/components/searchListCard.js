@@ -24,7 +24,7 @@ const CategoryThree = ({
     userData = JSON.parse(userData);
     setUserData(userData);
   };
-  const{addWishlistItem}=useWishlist();
+  const{addWishlistItem,fetchAllWishlistItems,wishlist}=useWishlist();
   const contactId = user ? user.contact_id : null;
 
   const discount = data.discount_percentage ? parseFloat(data.discount_percentage) : 0;
@@ -43,11 +43,15 @@ const CategoryThree = ({
     getUser();
   }, [contactId]);
 
+
+  
+
+
   const onPressSignIn = () => {
     navigation.navigate("Login");
   };
 
-  const Insert = () => {
+  const Insert = (data) => {
     if (!contactId) {
       Alert.alert(
         'Please Login',
@@ -73,10 +77,19 @@ const CategoryThree = ({
         product_id:data.product_id, 
     };
    
-    addWishlistItem(wishData)
+    addWishlistItem(wishData).then(()=>fetchAllWishlistItems(contactId)).catch(()=>{})
  
 
 };
+
+
+function isProductInWishlist(product) {
+    
+  return wishlist.some(wish => wish.product_id === product.product_id);
+}
+
+
+
   return (
     <View
       key={index}
@@ -171,11 +184,12 @@ const CategoryThree = ({
       
       </View>
       <TouchableOpacity style={styles.heartIcon}  onPress={() => {
-              Insert()
+              Insert(data)
             }} >
         <FontAwesome
           style={{
-            color: theme.secondry,
+            // color: theme.secondry,
+            color: isProductInWishlist(data) ? 'red' : theme.secondry,
             fontSize: icon
               ? theme.appFontSize.largeSize
               : theme.appFontSize.mediumSize

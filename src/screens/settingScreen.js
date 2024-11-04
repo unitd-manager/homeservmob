@@ -16,6 +16,7 @@ import LinearGradient from "react-native-linear-gradient"
 import { connect } from "react-redux"
 import RNRestart from "react-native-restart" // Import package from node modules
 import Ionicons from "react-native-vector-icons/FontAwesome"
+import api from "../constants/api"
 import IoniconsIcon from "react-native-vector-icons/Ionicons"
 import AsyncStorage from "@react-native-async-storage/async-storage"
 import PopUpModal from "../components/popupModal"
@@ -191,14 +192,23 @@ function SettingScreen({
   useEffect(() => {
     const getUserCart = async () => {
       try {
-        console.log('Fetching user data...');
+        
         const userData = await AsyncStorage.getItem('USER');
-        console.log('User data retrieved:', userData);
+      
         const user = JSON.parse(userData);
         setUserContactId(user?.contact_id || null);
-        setUserName(user?.first_name || null);
-        setUserEmail(user?.email || null);
-        console.log('User data set:', user);
+       
+        api
+        .post('/contact/getContactsById', {
+          contact_id: user?.contact_id || null,
+        })
+        .then(res => {
+          const contactCri = res.data.data;
+
+          setUserEmail(contactCri[0].email);
+          setUserName(contactCri[0].first_name);
+         
+        });
       } catch (error) {
         console.error('Error fetching cart:', error);
       }
@@ -562,7 +572,7 @@ function SettingScreen({
           </View>
         </View>
 
-        {simpleLabelViewFun(
+        {userContactId !== null && simpleLabelViewFun(
           theme,
           "user-circle",
           reduxLang.Profile,

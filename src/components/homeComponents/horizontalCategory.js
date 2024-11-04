@@ -16,7 +16,7 @@ const App = ({ theme, reduxLang, backgroundColor, iconColor }) => {
     api
       .get("/category/getAllCategory")
       .then(res => {
-        setCategories(res.data.data)
+        setCategories(res.data.data.slice(0, 4))
       })
       .catch(err => {
         console.log(err)

@@ -88,32 +88,17 @@ export const WishlistProvider = ({ children }) => {
       console.error('Error fetching cart items:', error);
     }
   };
-  // const fetchAllWishlist = async (id) => {
-  //   try {
-  //     const response = await api.post('/contact/getwishListByContactId', { contact_id: id }); // Replace with your API endpoint
-  //    console.log('resp of fetchAllWishlist ',response.data.data);
-  //    response.data.data.forEach(element => {
-  //     element.tag = String(element.tag).split(",")
-  //   })
-  //   response.data.data.forEach(el => {
-  //     el.images = String(el.images).split(",")
-  //   })
-  //     dispatch({ type: 'SET_ITEMS', payload: response.data.data });
-  //   } catch (error) {
-  //     console.error('Error fetching cart items:', error);
-  //   }
-  // };
   // Add item
   const addWishlistItem = async (item) => {
     try {
       const response = await api.post('/contact/insertToWishlist', item); 
-      if (response.status === 200) {
+      // if (response.status === 200) {
              
-                  Alert.alert('Product Add to Wishlist');
-            return response;
+      //             Alert.alert('Product Add to Wishlist');
+      //       return response;
              
     
-                }// Replace with your API endpoint
+      //           }// Replace with your API endpoint
       dispatch({ type: 'ADD_ITEM', payload: response.data.data });
     } catch (error) {
       console.error('Error adding item:', error);
@@ -154,7 +139,7 @@ export const WishlistProvider = ({ children }) => {
 
   // Get item by ID (client-side)
   const getWishlistItemById = (id) => {
-    const item = state.items.find(item => item.contact_id === id);
+    const item = state.items.find(item => item.wish_list_id === id);
     dispatch({ type: 'GET_ITEM_BY_ID', payload: { id } });
     return item; // Return the found item
   };

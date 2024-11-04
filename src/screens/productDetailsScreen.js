@@ -720,7 +720,7 @@ const ProductDetailScreen = ({ navigation, theme, reduxLang, route }) => {
           }
         >
           <Image
-             source={{ uri: item.images?.[0] ? `https://homeservices.unitdtechnologies.com/storage/uploads/${item.images[0]}` : null }}
+             source={{ uri: item.images?.[0] ? `https://homeservices.unitdtechnologies.com/storage/uploads/${item.images}` : null }}
             resizeMode={"cover"}
             borderRadius={8}
             style={[

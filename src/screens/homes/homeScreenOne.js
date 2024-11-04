@@ -33,7 +33,7 @@ import { useWishlist } from "../../context/WishlistContext"
 
 const App = ({ theme, reduxLang,textSize,icon }) => {
   
-  const PAGE_SIZE = 6;
+  const PAGE_SIZE = 18;
   const navigation = useNavigation()
   const [user, setUserData] = useState();
   const [sliderData, setSliderData] = useState([])
@@ -46,8 +46,7 @@ const App = ({ theme, reduxLang,textSize,icon }) => {
   const [compareItem, setCompareItem] = useState([])
   const [currentPage, setCurrentPage] = useState(1);
 
-  
- 
+
 
   const getUser = async () => {
     let userData = await AsyncStorage.getItem('USER');
@@ -72,8 +71,8 @@ const App = ({ theme, reduxLang,textSize,icon }) => {
   };
 
   const contactId = user ? user.contact_id : null;
-const{addWishlistItem,wishlist,fetchAllWishlist}=useWishlist();
-console.log('wishlist',wishlist)
+const{addWishlistItem,fetchAllWishlistItems,wishlist,removeWishlistItem}=useWishlist();
+
 
 // useEffect(() => {
 //   fetchAllWishlist(contactId);
@@ -110,9 +109,9 @@ console.log('wishlist',wishlist)
     
     const wishData = {
         contact_id: user.contact_id,
-        product_id:item, 
+        product_id:item.product_id, 
     };
-    addWishlistItem(wishData)
+    addWishlistItem(wishData).then(()=>fetchAllWishlistItems(contactId)).catch(()=>{})
    
 
 };
@@ -170,6 +169,12 @@ console.log('wishlist',wishlist)
         console.log(err)
       })
   }
+
+  function isProductInWishlist(product) {
+    
+    return wishlist.some(wish => wish.product_id === product.product_id);
+}
+
 
   const getMostPopularProducts = () => {
     api
@@ -541,13 +546,13 @@ console.log('wishlist',wishlist)
     //       console.log('Error inserting product:', err);
     //     });
     // }
-    Insert(item.product_id)
+    Insert(item)
   }} 
 >
   <FontAwesome
     style={{
-      color:theme.secondry,
-    //  color: hasMatchingContactId === true ? 'red' : theme.secondry,
+      // color:theme.secondry,
+     color: isProductInWishlist(item) ? 'red' : theme.secondry,
       fontSize: icon
         ? theme.appFontSize.largeSize
         : theme.appFontSize.mediumSize
